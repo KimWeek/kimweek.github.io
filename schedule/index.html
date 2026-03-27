@@ -43,7 +43,40 @@
       border-radius: 18px;
       border: 1px solid rgba(255, 255, 255, 0.16);
       background: rgba(255, 255, 255, 0.04);
-      padding: 18px;
+      overflow: hidden;
+    }
+
+    .project-card summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 16px 18px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .project-card summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .project-card summary::after {
+      content: "+";
+      position: absolute;
+      right: 18px;
+      top: 16px;
+      font-size: 18px;
+      color: var(--muted);
+    }
+
+    .project-card summary {
+      position: relative;
+    }
+
+    .project-card[open] summary::after {
+      content: "–";
+    }
+
+    .project-card .content {
+      padding: 0 18px 18px;
       display: grid;
       gap: 14px;
     }
@@ -139,14 +172,18 @@
 <body>
   <div class="wrap">
     <h1>프로젝트 일정</h1>
-    <div class="project-card">
-      <div class="thumb">16:9 이미지 자리</div>
-      <div class="meta">
+    <details class="project-card" open>
+      <summary>
         <div class="name">프로젝트 이름</div>
-        <p class="desc">프로젝트 설명을 적어주세요. 어떤 문제를 풀고, 어떤 성과를 냈는지 짧게 정리하면 좋습니다.</p>
         <div class="period">2026.03.01 ~ 2026.06.30</div>
+      </summary>
+      <div class="content">
+        <div class="thumb">16:9 이미지 자리</div>
+        <div class="meta">
+          <p class="desc">프로젝트 설명을 적어주세요. 어떤 문제를 풀고, 어떤 성과를 냈는지 짧게 정리하면 좋습니다.</p>
+        </div>
       </div>
-    </div>
+    </details>
     <div class="item">
       <span>현재 목표</span>
       <div>이 사이트 완성하기</div>
