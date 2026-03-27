@@ -79,6 +79,15 @@
       padding: 0 18px 18px;
       display: grid;
       gap: 14px;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease, opacity 0.35s ease;
+    }
+
+    .project-card[open] .content {
+      max-height: 800px;
+      opacity: 1;
     }
 
     .thumb {
