@@ -132,6 +132,39 @@
       font-size: 14px;
     }
 
+    .schedule {
+      margin-top: 32px;
+      display: grid;
+      gap: 10px;
+      max-width: 520px;
+    }
+
+    .schedule h2 {
+      margin: 0 0 4px;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .schedule-item {
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.04);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .schedule-item span {
+      color: var(--ink);
+      font-weight: 500;
+    }
+
     @media (max-width: 720px) {
       .hero {
         margin-top: 80px;
@@ -163,6 +196,11 @@
       .card:hover {
         border-color: rgba(0, 0, 0, 0.28);
         background: rgba(0, 0, 0, 0.06);
+      }
+
+      .schedule-item {
+        border-color: rgba(0, 0, 0, 0.16);
+        background: rgba(0, 0, 0, 0.03);
       }
 
       .noise {
@@ -205,6 +243,17 @@
         <div class="card-title">프로젝트 카드</div>
         <p class="card-desc">클릭하면 다른 사이트로 이동합니다.</p>
       </a>
+      <div class="schedule">
+        <h2>프로젝트 일정</h2>
+        <div class="schedule-item">
+          <span>현재 목표</span>
+          <div>이 사이트 완성하기</div>
+        </div>
+        <div class="schedule-item">
+          <span>다음 계획</span>
+          <div>아직 준비 중 (예시 텍스트)</div>
+        </div>
+      </div>
     </section>
   </div>
 </body>
