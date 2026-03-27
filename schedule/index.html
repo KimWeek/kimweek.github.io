@@ -82,12 +82,15 @@
       max-height: 0;
       opacity: 0;
       overflow: hidden;
-      transition: max-height 0.5s ease, opacity 0.35s ease;
+      transform: translateX(12px);
+      transition: none;
     }
 
     .project-card[open] .content {
       max-height: 800px;
       opacity: 1;
+      transform: translateX(0);
+      transition: max-height 0.5s ease, opacity 0.35s ease, transform 0.45s ease;
     }
 
     .thumb {
