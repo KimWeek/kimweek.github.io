@@ -98,6 +98,40 @@
       animation-delay: 0.25s;
     }
 
+    .card {
+      margin-top: 36px;
+      display: block;
+      max-width: 420px;
+      padding: 18px 20px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.04);
+      color: inherit;
+      text-decoration: none;
+      transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+      animation: fadeIn 1.1s ease forwards;
+      opacity: 0;
+      animation-delay: 0.4s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 255, 255, 0.35);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .card-title {
+      font-weight: 600;
+      margin: 0 0 6px;
+      font-size: 16px;
+    }
+
+    .card-desc {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
     @media (max-width: 720px) {
       .hero {
         margin-top: 80px;
@@ -119,6 +153,16 @@
         --headline-highlight: none;
         --bg-top: #ffffff;
         --bg-bottom: #e9e9e9;
+      }
+
+      .card {
+        border-color: rgba(0, 0, 0, 0.16);
+        background: rgba(0, 0, 0, 0.03);
+      }
+
+      .card:hover {
+        border-color: rgba(0, 0, 0, 0.28);
+        background: rgba(0, 0, 0, 0.06);
       }
 
       .noise {
@@ -157,6 +201,10 @@
         <span class="line" data-text="Kim Week">Kim Week</span>
       </h1>
       <p>솔직히, 뭐라고 말해야 할 지 모르겠네요.</p>
+      <a class="card" href="https://example.com" target="_blank" rel="noopener noreferrer">
+        <div class="card-title">프로젝트 카드</div>
+        <p class="card-desc">클릭하면 다른 사이트로 이동합니다.</p>
+      </a>
     </section>
   </div>
 </body>
