@@ -83,14 +83,13 @@
       opacity: 0;
       overflow: hidden;
       transform: translateX(12px);
-      transition: none;
     }
 
     .project-card[open] .content {
       max-height: 800px;
       opacity: 1;
       transform: translateX(0);
-      transition: max-height 0.5s ease, opacity 0.35s ease, transform 0.45s ease;
+      animation: slideIn 0.45s ease;
     }
 
     .thumb {
@@ -157,6 +156,17 @@
 
       a {
         border-bottom-color: rgba(0, 0, 0, 0.35);
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
       }
     }
   </style>
