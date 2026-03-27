@@ -39,6 +39,8 @@
       margin: 0;
       font-size: 36px;
       letter-spacing: -0.02em;
+      animation: rise 0.9s ease forwards;
+      opacity: 0;
     }
 
     .project-card {
@@ -46,7 +48,13 @@
       border: 1px solid rgba(255, 255, 255, 0.16);
       background: rgba(255, 255, 255, 0.04);
       overflow: hidden;
+      animation: fadeIn 0.9s ease forwards;
+      opacity: 0;
     }
+
+    .project-card:nth-of-type(1) { animation-delay: 0.1s; }
+    .project-card:nth-of-type(2) { animation-delay: 0.2s; }
+    .project-card:nth-of-type(3) { animation-delay: 0.3s; }
 
     .project-card summary {
       list-style: none;
@@ -81,17 +89,12 @@
       padding: 0 18px 18px;
       display: grid;
       gap: 14px;
-      max-height: 0;
-      opacity: 0;
-      overflow: hidden;
-      transform: translateY(-10px);
-      transition: max-height 0.45s ease, opacity 0.3s ease, transform 0.35s ease;
+      display: grid;
+      gap: 14px;
     }
 
-    .project-card[open] .content {
-      max-height: 800px;
-      opacity: 1;
-      transform: translateY(0);
+    details:not([open]) .content {
+      display: none;
     }
 
     .thumb {
@@ -161,6 +164,21 @@
       }
     }
 
+    @keyframes rise {
+      from {
+        transform: translateY(16px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
   </style>
 </head>
 <body>
