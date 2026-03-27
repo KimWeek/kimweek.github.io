@@ -27,7 +27,7 @@
     }
 
     .wrap {
-      max-width: 720px;
+      max-width: 900px;
       margin: 0 auto;
       display: grid;
       gap: 18px;
@@ -37,6 +37,50 @@
       margin: 0;
       font-size: 36px;
       letter-spacing: -0.02em;
+    }
+
+    .project-card {
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.04);
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .thumb {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02));
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .meta {
+      display: grid;
+      gap: 8px;
+    }
+
+    .name {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .desc {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    .period {
+      font-size: 13px;
+      color: var(--muted);
     }
 
     .item {
@@ -71,6 +115,16 @@
         --muted: #4b4b4b;
       }
 
+      .project-card {
+        border-color: rgba(0, 0, 0, 0.16);
+        background: rgba(0, 0, 0, 0.03);
+      }
+
+      .thumb {
+        border-color: rgba(0, 0, 0, 0.16);
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.02));
+      }
+
       .item {
         border-color: rgba(0, 0, 0, 0.16);
         background: rgba(0, 0, 0, 0.03);
@@ -85,6 +139,14 @@
 <body>
   <div class="wrap">
     <h1>프로젝트 일정</h1>
+    <div class="project-card">
+      <div class="thumb">16:9 이미지 자리</div>
+      <div class="meta">
+        <div class="name">프로젝트 이름</div>
+        <p class="desc">프로젝트 설명을 적어주세요. 어떤 문제를 풀고, 어떤 성과를 냈는지 짧게 정리하면 좋습니다.</p>
+        <div class="period">2026.03.01 ~ 2026.06.30</div>
+      </div>
+    </div>
     <div class="item">
       <span>현재 목표</span>
       <div>이 사이트 완성하기</div>
