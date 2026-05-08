@@ -1,27 +1,50 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>김위크</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0a0a0a;
-      --ink: #f5f5f5;
-      --muted: #b9b9b9;
-      --accent: #ffffff;
-      --accent-2: #e0e0e0;
-      --card: rgba(255, 255, 255, 0.06);
-      --border: rgba(255, 255, 255, 0.14);
-      --shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
-      --headline-base: #f2f2f2;
-      --headline-shadow: none;
-      --headline-highlight: none;
-      --bg-top: #0a0a0a;
-      --bg-bottom: #1a1a1a;
+      color-scheme: light dark;
+      --page-bg: #eef3f8;
+      --rectangle-bg: rgba(255, 255, 255, 0.78);
+      --rectangle-border: rgba(34, 63, 92, 0.16);
+      --text: #27313d;
+      --muted: #697887;
+      --track: rgba(39, 49, 61, 0.1);
+      --fill: rgba(39, 49, 61, 0.62);
+      --success: #2f6f58;
+      --button-bg: rgba(255, 255, 255, 0.72);
+      --button-border: rgba(34, 63, 92, 0.16);
+      --button-text: #27313d;
+      --music-bg: rgba(255, 255, 255, 0.82);
+      --music-border: rgba(34, 63, 92, 0.14);
+      --music-text: #27313d;
+      --music-height: 96px;
+      --record: #111827;
+      --record-ring: rgba(255, 255, 255, 0.2);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --page-bg: #0f1115;
+        --rectangle-bg: rgba(200, 202, 206, 0.09);
+        --rectangle-border: rgba(226, 228, 232, 0.16);
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --track: rgba(229, 231, 235, 0.1);
+        --fill: rgba(229, 231, 235, 0.66);
+        --success: #8fd6b3;
+        --button-bg: rgba(200, 202, 206, 0.1);
+        --button-border: rgba(226, 228, 232, 0.16);
+        --button-text: #e5e7eb;
+        --music-bg: rgba(200, 202, 206, 0.1);
+        --music-border: rgba(226, 228, 232, 0.16);
+        --music-text: #e5e7eb;
+        --record: #f8fafc;
+        --record-ring: rgba(15, 17, 21, 0.28);
+      }
     }
 
     * {
@@ -29,260 +52,842 @@
     }
 
     body {
-      margin: 0;
-      font-family: "Manrope", "Noto Sans KR", sans-serif;
-      color: var(--ink);
-      background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
       min-height: 100vh;
-      overflow-x: hidden;
+      margin: 0;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--page-bg);
     }
 
-    .noise {
+    .page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(calc(-50vh - 240px));
+      transition: opacity 700ms ease, transform 820ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    body.content-ready .page {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .content-layout {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      width: min(820px, calc(100vw - 48px));
+    }
+
+    .content-rectangle {
+      flex: 1;
+      width: min(680px, 100%);
+      height: min(420px, 58vh);
+      display: grid;
+      align-content: center;
+      gap: 18px;
+      padding: clamp(32px, 6vw, 56px);
+      border: 1px solid var(--rectangle-border);
+      border-radius: 24px;
+      background: var(--rectangle-bg);
+      color: var(--text);
+    }
+
+    .intro {
+      max-width: 480px;
+    }
+
+    .intro-kicker {
+      margin: 0 0 6px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .intro-title {
+      margin: 0;
+      font-size: clamp(32px, 7vw, 64px);
+      font-weight: 750;
+      line-height: 0.98;
+      letter-spacing: -0.06em;
+      transform: translate(-0.05em, -0.04em);
+    }
+
+    .intro-text {
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: clamp(15px, 2vw, 18px);
+      line-height: 1.7;
+      word-break: keep-all;
+    }
+
+    .intro-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 26px;
+    }
+
+    .intro-tag {
+      padding: 7px 11px;
+      border: 1px solid var(--rectangle-border);
+      border-radius: 999px;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .side-actions {
+      display: grid;
+      gap: 12px;
+      flex: 0 0 auto;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-72px);
+      transition:
+        opacity 420ms ease 260ms,
+        transform 620ms cubic-bezier(0.16, 1, 0.3, 1) 260ms;
+    }
+
+    body.content-ready .side-actions {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    .action-button {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--button-border);
+      border-radius: 50%;
+      color: var(--button-text);
+      background: var(--button-bg);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transform: translateX(-24px);
+      opacity: 0;
+      transition:
+        opacity 420ms ease,
+        transform 520ms cubic-bezier(0.16, 1, 0.3, 1),
+        background 180ms ease;
+    }
+
+    body.content-ready .action-button {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    body.content-ready .action-button:nth-child(1) {
+      transition-delay: 360ms, 360ms, 0ms;
+    }
+
+    body.content-ready .action-button:nth-child(2) {
+      transition-delay: 450ms, 450ms, 0ms;
+    }
+
+    body.content-ready .action-button:nth-child(3) {
+      transition-delay: 540ms, 540ms, 0ms;
+    }
+
+    .action-button:hover {
+      background: var(--rectangle-bg);
+    }
+
+    .action-icon {
+      width: 26px;
+      height: 26px;
+      display: block;
+      object-fit: contain;
+      filter: brightness(0) saturate(100%) invert(10%) sepia(17%) saturate(1039%) hue-rotate(179deg) brightness(93%) contrast(93%);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .action-icon {
+        filter: none;
+      }
+    }
+
+    .music-toast {
+      position: fixed;
+      top: 24px;
+      left: 0;
+      z-index: 3;
+      width: min(340px, calc(100vw - 24px));
+      height: var(--music-height);
+      padding: 0 calc(var(--music-height) / 2 + 56px) 0 18px;
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--music-border);
+      border-left: 0;
+      border-radius: 0;
+      color: var(--music-text);
+      background: var(--music-bg);
+      font-weight: 650;
+      letter-spacing: -0.01em;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-100%);
+      transition:
+        opacity 320ms ease,
+        transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .music-toast.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    .music-toast.is-parked {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-100%);
+    }
+
+    .music-toast.is-paused .music-record {
+      animation-play-state: paused;
+    }
+
+    .music-record {
+      appearance: none;
+      position: absolute;
+      top: 50%;
+      right: calc(var(--music-height) / -2);
+      width: var(--music-height);
+      height: var(--music-height);
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      cursor: pointer;
+      transform: translateY(-50%);
+      background:
+        radial-gradient(circle at center, var(--page-bg) 0 12%, transparent 13%),
+        repeating-radial-gradient(circle at center, var(--record-ring) 0 1px, transparent 1px 5px),
+        var(--record);
+      animation: spin-record 2.8s linear infinite;
+    }
+
+    .music-record::after {
+      content: "";
+      position: absolute;
+      top: 9px;
+      left: 50%;
+      width: 4px;
+      height: 12px;
+      border-radius: 999px;
+      background: var(--record-ring);
+      transform: translateX(-50%);
+    }
+
+    .music-volume {
+      position: absolute;
+      top: 50%;
+      right: calc(var(--music-height) / 2 + 18px);
+      width: 18px;
+      height: 62px;
+      transform: translateY(-50%);
+    }
+
+    .music-volume input {
+      width: 62px;
+      height: 18px;
+      margin: 0;
+      appearance: none;
+      background: transparent;
+      cursor: pointer;
+      transform: translate(-22px, 22px) rotate(-90deg);
+      transform-origin: center;
+    }
+
+    .music-volume input::-webkit-slider-runnable-track {
+      height: 3px;
+      border-radius: 999px;
+      background: var(--track);
+    }
+
+    .music-volume input::-webkit-slider-thumb {
+      width: 10px;
+      height: 10px;
+      margin-top: -3.5px;
+      appearance: none;
+      border: 0;
+      border-radius: 50%;
+      background: var(--music-text);
+    }
+
+    .music-volume input::-moz-range-track {
+      height: 3px;
+      border-radius: 999px;
+      background: var(--track);
+    }
+
+    .music-volume input::-moz-range-thumb {
+      width: 10px;
+      height: 10px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--music-text);
+    }
+
+    .music-meta {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .music-title {
+      overflow: hidden;
+      font-size: 16px;
+      line-height: 1.2;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .music-composer {
+      overflow: hidden;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.2;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .music-time {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: 0.02em;
+    }
+
+    .music-controls {
+      display: flex;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .music-control {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      border: 1px solid var(--music-border);
+      border-radius: 50%;
+      color: var(--music-text);
+      background: transparent;
+      font: inherit;
+      line-height: 1;
+      cursor: pointer;
+      transition: background 180ms ease, transform 180ms ease;
+    }
+
+    .music-control:hover {
+      background: var(--track);
+      transform: translateY(-1px);
+    }
+
+    .control-icon {
+      position: relative;
+      width: 12px;
+      height: 12px;
+      display: block;
+    }
+
+    .control-icon::before,
+    .control-icon::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .control-icon.previous::before,
+    .control-icon.next::before,
+    .control-icon.previous::after,
+    .control-icon.next::after {
+      width: 0;
+      height: 0;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+    }
+
+    .control-icon.previous::before {
+      left: 0;
+      border-right: 6px solid currentColor;
+    }
+
+    .control-icon.previous::after {
+      right: 1px;
+      border-right: 6px solid currentColor;
+    }
+
+    .control-icon.next::before {
+      left: 1px;
+      border-left: 6px solid currentColor;
+    }
+
+    .control-icon.next::after {
+      right: 0;
+      border-left: 6px solid currentColor;
+    }
+
+    .control-icon.pause::before,
+    .control-icon.pause::after {
+      width: 4px;
+      height: 12px;
+      border-radius: 1px;
+      background: currentColor;
+    }
+
+    .control-icon.pause::before {
+      left: 1px;
+    }
+
+    .control-icon.pause::after {
+      right: 1px;
+    }
+
+    .control-icon.play::before {
+      left: 3px;
+      width: 0;
+      height: 0;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      border-left: 9px solid currentColor;
+    }
+
+    .loader-stage {
       position: fixed;
       inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.15'/%3E%3C/svg%3E");
-      mix-blend-mode: soft-light;
+      z-index: 10;
+      display: grid;
+      place-items: center;
       pointer-events: none;
-      opacity: 0.4;
+      transition: opacity 420ms ease 180ms, visibility 0s linear 600ms;
     }
 
-    .wrapper {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 80px 24px 120px;
-      position: relative;
+    body.content-ready .loader-stage {
+      opacity: 0;
+      visibility: hidden;
     }
 
-    .hero {
-      margin-top: 120px;
+    .rectangle {
+      width: min(520px, 72vw);
+      height: min(300px, 42vw);
       display: grid;
-      gap: 24px;
-    }
-
-    .headline {
-      font-size: clamp(42px, 8vw, 92px);
-      margin: 0;
-      line-height: 1.02;
-      letter-spacing: -0.02em;
-      color: var(--headline-base);
-    }
-
-    .headline .line {
-      display: block;
-      position: relative;
-      animation: rise 0.9s ease forwards;
-      opacity: 0;
-    }
-
-    .headline .line::after {
-      content: attr(data-text);
-      position: absolute;
-      inset: 0;
-      color: var(--headline-base);
-      text-shadow: none;
-      mix-blend-mode: screen;
-    }
-
-    .headline .line:nth-child(2) {
-      animation-delay: 0.12s;
-    }
-
-    .hero p {
-      margin: 0;
-      font-size: 18px;
-      max-width: 560px;
-      color: var(--muted);
-      font-family: "Noto Sans KR", sans-serif;
-      animation: fadeIn 1s ease forwards;
-      opacity: 0;
-      animation-delay: 0.25s;
-    }
-
-    .card {
-      margin-top: 36px;
-      display: block;
-      max-width: 420px;
-      padding: 18px 20px;
+      place-items: center;
+      padding: 32px;
+      border: 1px solid var(--rectangle-border);
       border-radius: 18px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: rgba(255, 255, 255, 0.04);
-      color: inherit;
-      text-decoration: none;
-      transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
-      animation: fadeIn 1.1s ease forwards;
-      opacity: 0;
-      animation-delay: 0.4s;
+      background: var(--rectangle-bg);
+      overflow: hidden;
+      text-align: center;
+      transform-origin: center center;
+      animation: rise-and-unfold 1150ms cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
-    .card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(255, 255, 255, 0.35);
-      background: rgba(255, 255, 255, 0.08);
+    .loader-stage.is-shrinking .rectangle {
+      animation: slide-down-out 820ms cubic-bezier(0.7, 0, 0.84, 0) both;
     }
 
-    .card-title {
-      font-weight: 600;
-      margin: 0 0 6px;
-      font-size: 16px;
-    }
-
-    .card-desc {
+    .loading {
       margin: 0;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .schedule {
-      margin-top: 32px;
-      max-width: 520px;
-      display: grid;
-      gap: 10px;
-      color: inherit;
-      text-decoration: none;
-      padding: 18px 20px;
-      border-radius: 18px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: rgba(255, 255, 255, 0.04);
-      transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
-      animation: fadeIn 1.1s ease forwards;
+      width: min(260px, 100%);
+      color: var(--text);
       opacity: 0;
-      animation-delay: 0.48s;
+      animation: fade-in 360ms ease 860ms both;
     }
 
-    .schedule:hover {
-      transform: translateY(-4px);
-      border-color: rgba(255, 255, 255, 0.35);
-      background: rgba(255, 255, 255, 0.08);
+    .loading-title {
+      margin: 0;
+      font-size: clamp(20px, 4vw, 32px);
+      font-weight: 650;
+      letter-spacing: -0.03em;
     }
 
-    .schedule h2 {
-      margin: 0 0 4px;
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
+    .loading-message {
+      display: block;
+      margin-top: 10px;
       color: var(--muted);
+      font-size: clamp(13px, 2vw, 15px);
+      font-weight: 400;
+      letter-spacing: 0;
     }
 
-    .schedule-item {
-      padding: 12px 14px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: rgba(255, 255, 255, 0.04);
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
+    .loading-progress {
+      display: block;
+      margin-top: 18px;
+      color: var(--text);
       font-size: 14px;
-      color: var(--muted);
+      font-weight: 600;
+      letter-spacing: 0.04em;
     }
 
-    .schedule-item span {
-      color: var(--ink);
-      font-weight: 500;
+    .loading-bar {
+      height: 6px;
+      margin-top: 12px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: var(--track);
     }
 
-    @media (max-width: 720px) {
-      .hero {
-        margin-top: 80px;
-      }
+    .loading-fill {
+      width: var(--progress, 0%);
+      height: 100%;
+      border-radius: inherit;
+      background: var(--fill);
+      transition: width 180ms ease;
     }
 
-    @media (prefers-color-scheme: light) {
-      :root {
-        --bg: #ffffff;
-        --ink: #0a0a0a;
-        --muted: #4b4b4b;
-        --accent: #0a0a0a;
-        --accent-2: #2b2b2b;
-        --card: rgba(0, 0, 0, 0.04);
-        --border: rgba(0, 0, 0, 0.12);
-        --shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
-        --headline-base: #0a0a0a;
-        --headline-shadow: none;
-        --headline-highlight: none;
-        --bg-top: #ffffff;
-        --bg-bottom: #e9e9e9;
+    .loading.is-complete .loading-title,
+    .loading.is-complete .loading-progress {
+      color: var(--success);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .page,
+      .rectangle,
+      .loader-stage.is-shrinking .rectangle,
+      .loader-stage,
+      .loading,
+      .loading-fill,
+      .side-actions,
+      .action-button,
+      .music-toast,
+      .music-record {
+        transition: none;
+        animation: none;
       }
 
-      .card {
-        border-color: rgba(0, 0, 0, 0.16);
-        background: rgba(0, 0, 0, 0.03);
-      }
-
-      .card:hover {
-        border-color: rgba(0, 0, 0, 0.28);
-        background: rgba(0, 0, 0, 0.06);
-      }
-
-      .schedule-item {
-        border-color: rgba(0, 0, 0, 0.16);
-        background: rgba(0, 0, 0, 0.03);
-      }
-
-      .schedule {
-        border-color: rgba(0, 0, 0, 0.16);
-        background: rgba(0, 0, 0, 0.03);
-      }
-
-      .schedule:hover {
-        border-color: rgba(0, 0, 0, 0.28);
-        background: rgba(0, 0, 0, 0.06);
-      }
-
-      .noise {
-        opacity: 0.25;
+      .loading {
+        opacity: 1;
       }
     }
 
-    @keyframes rise {
+    @keyframes rise-and-unfold {
+      0% {
+        opacity: 0;
+        transform: translateY(42px) scaleY(0.12);
+      }
+
+      52% {
+        opacity: 1;
+        transform: translateY(0) scaleY(0.12);
+      }
+
+      99.9% {
+        opacity: 1;
+        transform: translateY(0) scaleY(1);
+      }
+
+      100% {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes fade-in {
       from {
-        transform: translateY(16px);
         opacity: 0;
       }
+
       to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slide-down-out {
+      from {
+        opacity: 1;
         transform: translateY(0);
-        opacity: 1;
       }
-    }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
       to {
         opacity: 1;
+        transform: translateY(calc(50vh + 260px));
       }
     }
 
+    @keyframes spin-record {
+      to {
+        transform: translateY(-50%) rotate(1turn);
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="noise"></div>
-  <div class="wrapper">
-    <section class="hero">
-      <h1 class="headline">
-        <span class="line" data-text="김위크">김위크</span>
-        <span class="line" data-text="Kim Week">Kim Week</span>
-      </h1>
-      <p>솔직히, 뭐라고 적어야 할 지 모르겠네요.</p>
-      <a class="card" href="/example/">
-        <div class="card-title">테스트</div>
-        <p class="card-desc">테스트용 하위 페이지로 이동됩니다.</p>
-      </a>
-      <a class="schedule" href="/schedule/">
-        <h2>김위크의 공방 일정</h2>
-        <div class="schedule-item">
-          <span>현재 목표</span>
-          <div>이 사이트 완성하기</div>
-        </div>
-        <div class="schedule-item">
-          <span>다음 계획</span>
-          <div>미정</div>
-        </div>
-      </a>
-    </section>
+  <main class="page" aria-label="본문">
+    <div class="content-layout">
+      <nav class="side-actions" aria-label="빠른 작업">
+        <a class="action-button" href="https://discord.gg/qmwMGWMcFZ" target="_blank" rel="noopener noreferrer" aria-label="Discord 링크">
+          <img class="action-icon" src="assets/discord-icon.png" alt="" />
+        </a>
+        <a class="action-button" href="https://www.roblox.com/ko/users/3301201431/profile" target="_blank" rel="noopener noreferrer" aria-label="Roblox 프로필">
+          <img class="action-icon" src="assets/roblox-icon.png" alt="" />
+        </a>
+        <a class="action-button" href="https://github.com/KimWeek" target="_blank" rel="noopener noreferrer" aria-label="GitHub 프로필">
+          <img class="action-icon" src="assets/github-icon.png" alt="" />
+        </a>
+      </nav>
+      <div class="content-rectangle">
+        <section class="intro" aria-labelledby="intro-title">
+          <p class="intro-kicker">Kim Week</p>
+          <h1 class="intro-title" id="intro-title">김위크</h1>
+          <p class="intro-text">
+            뭐라고 적을 지 모르겠네요. 자기소개라도 적어놓을까요?
+          </p>
+          <div class="intro-tags" aria-label="사용자명">
+            <span class="intro-tag">Discord · kim_week</span>
+            <span class="intro-tag">Roblox · Kim_W3ek</span>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <div class="music-toast" role="status" aria-live="polite">
+    <span class="music-meta">
+      <span class="music-title">Longing for AIR</span>
+      <span class="music-composer">Takeshi Abo</span>
+      <span class="music-time">0:00 / --:--</span>
+      <span class="music-controls" aria-label="음악 컨트롤">
+        <button class="music-control" type="button" data-music-action="previous" aria-label="이전 곡">
+          <span class="control-icon previous" aria-hidden="true"></span>
+        </button>
+        <button class="music-control music-play-toggle" type="button" data-music-action="toggle" aria-label="일시정지">
+          <span class="control-icon pause" aria-hidden="true"></span>
+        </button>
+        <button class="music-control" type="button" data-music-action="next" aria-label="다음 곡">
+          <span class="control-icon next" aria-hidden="true"></span>
+        </button>
+      </span>
+    </span>
+    <label class="music-volume" aria-label="볼륨">
+      <input class="music-volume-slider" type="range" min="0" max="1" step="0.01" value="0.7" />
+    </label>
+    <button class="music-record" type="button" aria-label="현재 재생 바 열기" aria-expanded="false"></button>
   </div>
+
+  <div class="loader-stage">
+    <div class="rectangle">
+      <div class="loading" role="status" aria-live="polite">
+        <p class="loading-title">Loading</p>
+        <span class="loading-message">잠시만 기다려주세요.</span>
+        <span class="loading-progress">0%</span>
+        <div class="loading-bar" aria-hidden="true">
+          <div class="loading-fill"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const loaderStage = document.querySelector(".loader-stage");
+    const loading = document.querySelector(".loading");
+    const title = document.querySelector(".loading-title");
+    const message = document.querySelector(".loading-message");
+    const progress = document.querySelector(".loading-progress");
+    const fill = document.querySelector(".loading-fill");
+    const musicToast = document.querySelector(".music-toast");
+    const musicTitle = document.querySelector(".music-title");
+    const musicComposer = document.querySelector(".music-composer");
+    const musicTime = document.querySelector(".music-time");
+    const musicRecord = document.querySelector(".music-record");
+    const musicPlayToggle = document.querySelector(".music-play-toggle");
+    const musicPlayIcon = musicPlayToggle.querySelector(".control-icon");
+    const musicControls = document.querySelectorAll("[data-music-action]");
+    const musicVolumeSlider = document.querySelector(".music-volume-slider");
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const musicAudio = new Audio();
+    musicAudio.volume = Number(musicVolumeSlider.value);
+    const playlist = [
+      {
+        title: "Longing for AIR", //https://www.youtube.com/watch?v=K6cf7sf2ybs 걍 땜빵용\\
+        composer: "Takeshi Abo",
+        src: "assets/music/Longing-for-AIR.mp3",
+      },
+      {
+        title: "JANE DOE but it's lofi hiphop", //제인 도\\
+        composer: "rinov",
+        src: "assets/music/JANE-DOE-but-it-s-lofi-hiphop.mp3",
+      },
+      {
+        title: "AIZO but it's lofi hiphop", //애증\\
+        composer: "rinov",
+        src: "assets/music/AIZO-but-it-s-lofi-hiphop.mp3",
+      },
+      {
+        title: "Bubble Pop Electric but it sounds like it's straight from an old 2009 Roblox song", //버블 팝 일렉트릭\\
+        composer: "chronocopes",
+        src: "assets/music/Bubble-Pop-Electric.mp3",
+      },
+      {
+        title: "Jane but it sounds like it's straight from an old 2009 Roblox song", //제인\\
+        composer: "chronocopes",
+        src: "assets/music/Jane.mp4", //얘는 왜 mp4야 한결아 ㅅ1ㅂ?\\
+      },
+      {
+        title: "Judas but it sounds like it's straight from an old 2009 Roblox song", //유다\\
+        composer: "chronocopes",
+        src: "assets/music/Judas.mp3",
+      },
+    ];
+
+    let percent = 0;
+    let currentTrackIndex = 0;
+    let isMusicPlaying = false;
+
+    const formatTime = (seconds) => {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = String(seconds % 60).padStart(2, "0");
+      return `${minutes}:${remainingSeconds}`;
+    };
+
+    const updateMusicTime = () => {
+      const currentTime = Math.floor(musicAudio.currentTime || 0);
+      const duration = Number.isFinite(musicAudio.duration)
+        ? formatTime(Math.floor(musicAudio.duration))
+        : "--:--";
+
+      musicTime.textContent = `${formatTime(currentTime)} / ${duration}`;
+    };
+
+    const updatePlayButton = (isPlaying) => {
+      isMusicPlaying = isPlaying;
+      musicPlayIcon.className = `control-icon ${isPlaying ? "pause" : "play"}`;
+      musicPlayToggle.setAttribute("aria-label", isPlaying ? "일시정지" : "재생");
+      musicToast.classList.toggle("is-paused", !isPlaying);
+    };
+
+    const loadTrack = (trackIndex) => {
+      const track = playlist[trackIndex];
+      currentTrackIndex = trackIndex;
+      musicAudio.src = track.src;
+      musicAudio.load();
+      musicTitle.textContent = track.title;
+      musicComposer.textContent = track.composer;
+      updateMusicTime();
+    };
+
+    const playCurrentTrack = async () => {
+      try {
+        await musicAudio.play();
+        updatePlayButton(true);
+      } catch {
+        updatePlayButton(false);
+      }
+    };
+
+    const playTrack = (trackIndex, shouldPlay = isMusicPlaying) => {
+      loadTrack((trackIndex + playlist.length) % playlist.length);
+      showMusicToast(playlist[currentTrackIndex].title, playlist[currentTrackIndex].composer);
+
+      if (shouldPlay) {
+        playCurrentTrack();
+      }
+    };
+
+    const setProgress = (nextPercent) => {
+      percent = Math.min(nextPercent, 100);
+      progress.textContent = `${percent}%`;
+      fill.style.setProperty("--progress", `${percent}%`);
+    };
+
+    const parkMusicToast = () => {
+      musicToast.classList.remove("is-visible");
+      musicToast.classList.add("is-parked");
+      musicRecord.setAttribute("aria-label", "현재 재생 바 열기");
+      musicRecord.setAttribute("aria-expanded", "false");
+    };
+
+    const showMusicToast = (trackTitle, composer = "Unknown Composer") => {
+      musicTitle.textContent = trackTitle;
+      musicComposer.textContent = composer;
+      musicToast.classList.remove("is-parked");
+      musicToast.classList.add("is-visible");
+      musicRecord.setAttribute("aria-label", "현재 재생 바 닫기");
+      musicRecord.setAttribute("aria-expanded", "true");
+    };
+
+    musicRecord.addEventListener("click", () => {
+      if (musicToast.classList.contains("is-visible")) {
+        parkMusicToast();
+        return;
+      }
+
+      showMusicToast(musicTitle.textContent, musicComposer.textContent);
+    });
+
+    musicControls.forEach((control) => {
+      control.addEventListener("click", () => {
+        const action = control.dataset.musicAction;
+
+        if (action === "toggle") {
+          if (musicAudio.paused) {
+            playCurrentTrack();
+          } else {
+            musicAudio.pause();
+          }
+          return;
+        }
+
+        playTrack(currentTrackIndex + (action === "next" ? 1 : -1));
+      });
+    });
+
+    musicVolumeSlider.addEventListener("input", () => {
+      musicAudio.volume = Number(musicVolumeSlider.value);
+    });
+
+    musicAudio.addEventListener("loadedmetadata", updateMusicTime);
+    musicAudio.addEventListener("timeupdate", updateMusicTime);
+    musicAudio.addEventListener("play", () => updatePlayButton(true));
+    musicAudio.addEventListener("pause", () => updatePlayButton(false));
+    musicAudio.addEventListener("ended", () => playTrack(currentTrackIndex + 1, true));
+
+    loadTrack(0);
+
+    const showContent = () => {
+      loaderStage.classList.add("is-shrinking");
+      window.setTimeout(() => {
+        document.body.classList.add("content-ready");
+        window.setTimeout(() => {
+          const track = playlist[currentTrackIndex];
+          showMusicToast(track.title, track.composer);
+          playCurrentTrack();
+        }, prefersReducedMotion ? 0 : 760);
+      }, prefersReducedMotion ? 0 : 1100);
+    };
+
+    const completeLoading = () => {
+      loading.classList.add("is-complete");
+      title.textContent = "완료!";
+      message.textContent = "준비가 끝났어요.";
+
+      window.setTimeout(showContent, prefersReducedMotion ? 0 : 520);
+    };
+
+    const timer = window.setInterval(() => {
+      const step = percent < 60 ? 4 : percent < 90 ? 2 : 1;
+      setProgress(percent + step);
+
+      if (percent >= 100) {
+        window.clearInterval(timer);
+        completeLoading();
+      }
+    }, 95);
+  </script>
 </body>
 </html>
-
-
