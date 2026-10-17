@@ -1,4 +1,4 @@
-@font-face{font-family:'DM Serif Display';src:url('/assets/dm-serif-display.woff') format('woff');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'DM Serif Display';src:url('./dm-serif-display.woff') format('woff');font-weight:400;font-style:normal;font-display:swap}
 :root{
   --bg:#040711;--ink:#edf0f8;--accent:#b5bfd6;--muted:#a4adc1;--surface:#141a29;
   --star:#d9deed;--star-bright:#f5f6ff;--star-cool:#c3cde7;--star-warm:#d7cbd7;
