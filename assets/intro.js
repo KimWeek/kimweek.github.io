@@ -145,10 +145,6 @@ function startIntro() {
   if(!stage||!page)return;
   const motion=matchMedia('(prefers-reduced-motion: reduce)');
   const touch=matchMedia('(hover: none), (pointer: coarse)').matches;
-  if(touch){
-    const meter=stage.querySelector?.('.flat-progress');
-    if(meter){meter.classList.add('flat-progress-mobile');meter.setAttribute('aria-hidden','true');stage.append(meter);}
-  }
   const skip=document.getElementById('intro-skip'),progress=document.getElementById('intro-progress'),announcement=document.getElementById('intro-announcement');
   const fills=[...stage.querySelectorAll('[data-intro-fill]')],values=[...stage.querySelectorAll('[data-intro-value]')],states=[...stage.querySelectorAll('[data-intro-state]')];
   let weight=0,ready=false,phase='loading',shown=0,integer=-1,frame=0,last=performance.now(),started=last,completeTimer=0,revealTimer=0,returnFocus=false;
