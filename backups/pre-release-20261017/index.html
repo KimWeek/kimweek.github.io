@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#030917">
+  <meta name="description" content="KIM WEEK — Portfolio">
+  <title>KIM WEEK — Portfolio</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+  <link rel="stylesheet" href="/assets/lenis.css">
+  <link rel="preload" href="/assets/editorial-serif.otf" as="font" type="font/otf" crossorigin>
+  <link rel="preload" href="/assets/manrope.woff" as="font" type="font/woff" crossorigin>
+  <style>
+    @font-face {
+      font-family: Editorial Serif;
+      src: url("/assets/editorial-serif.otf") format("opentype");
+      font-weight: 400;
+      font-style: italic;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: Editorial Sans;
+      src: url("/assets/editorial-sans.otf") format("opentype");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    :root {
+      color-scheme: dark;
+      --bg: #030917;
+      --ink: #edf4ff;
+      --accent: #9abff0;
+      --star: #d9eaff;
+      --star-bright: #f4f8ff;
+      --nebula: rgba(27, 86, 169, .17);
+      --nebula-edge: rgba(25, 58, 130, .16);
+      --glass: rgba(133, 179, 234, .065);
+      --glass-border: rgba(192, 220, 255, .21);
+      --glass-highlight: rgba(238, 247, 255, .23);
+      --type-top: #ffffff;
+      --type-middle: #dcecff;
+      --type-bottom: #94b3d6;
+      --type-blue-top: #d7ecff;
+      --type-blue-bottom: #80a6d5;
+      --type-sheen: rgba(255, 255, 255, .6);
+      --solid-front: #aacff5;
+      --solid-back: #254d78;
+      --px: 0;
+      --py: 0;
+      --gutter: clamp(21px, 3.5vw, 64px);
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      margin: 0;
+      overflow: visible;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: "Editorial Sans", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    body[data-theme="light"] {
+      color-scheme: light;
+      --bg: #dce8f5;
+      --ink: #102942;
+      --accent: #4475a7;
+      --star: #638ab4;
+      --star-bright: #4877a7;
+      --nebula: rgba(125, 176, 231, .25);
+      --nebula-edge: rgba(161, 196, 232, .30);
+      --glass: rgba(248, 252, 255, .3);
+      --glass-border: rgba(255, 255, 255, .65);
+      --glass-highlight: rgba(255, 255, 255, .8);
+      --type-top: #132f4d;
+      --type-middle: #3a648d;
+      --type-bottom: #183b60;
+      --type-blue-top: #326491;
+      --type-blue-bottom: #5b83ab;
+      --type-sheen: rgba(220, 240, 255, .35);
+      --solid-front: #87a4c2;
+      --solid-back: #365c80;
+    }
+    button { -webkit-tap-highlight-color: transparent; }
+    :is(button, a, [tabindex]):focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
+    ::selection { color: var(--bg); background: var(--accent); }
+    .icon-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+    .spark { display: block; width: 100%; height: 100%; fill: currentColor; }
+    .page {
+      position: relative;
+      width: 100%;
+      min-height: 100dvh;
+      overflow: clip;
+      isolation: isolate;
+      background: var(--bg);
+    }
+    .atmosphere {
+      position: absolute;
+      z-index: -4;
+      inset: -15%;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 36% 31% at 66% 60%, var(--nebula), transparent 100%),
+        radial-gradient(ellipse 35% 44% at 22% 31%, var(--nebula-edge), transparent 100%),
+        radial-gradient(ellipse 65% 22% at 60% 90%, var(--nebula-edge), transparent 100%);
+      animation: nebula-drift 36s ease-in-out infinite alternate;
+    }
+    .atmosphere::after {
+      content: "";
+      position: absolute;
+      inset: 18% -10%;
+      opacity: .62;
+      transform: rotate(-28deg);
+      background: radial-gradient(ellipse 48% 20% at 50% 50%, var(--nebula), transparent 100%);
+      filter: blur(30px);
+    }
+    @keyframes nebula-drift {
+      from { transform: translate3d(-1.5%, 1%, 0) scale(1); }
+      to { transform: translate3d(3%, -2%, 0) scale(1.05); }
+    }
+    #nebula {
+      position: absolute;
+      z-index: -3;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1.2s ease;
+    }
+    #nebula.is-ready { opacity: 1; }
+    .sky { position: absolute; z-index: -2; inset: 0; pointer-events: none; }
+    .topbar {
+      position: absolute;
+      z-index: 5;
+      inset: 0 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 26px var(--gutter);
+      pointer-events: none;
+    }
+    .glass {
+      --glass-x: 0px;
+      --glass-y: 0px;
+      --glass-rx: 0deg;
+      --glass-ry: 0deg;
+      --glass-sx: 1;
+      --glass-sy: 1;
+      --glass-gx: 38%;
+      --glass-gy: 12%;
+      --glass-energy: 0;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--glass-border);
+      border-radius: 999px;
+      background:
+        linear-gradient(150deg, rgba(235, 247, 255, .085), rgba(221, 240, 255, .018) 45%, rgba(130, 184, 246, .045)),
+        rgba(140, 183, 230, .035);
+      -webkit-backdrop-filter: blur(2px) saturate(170%) brightness(1.06);
+      backdrop-filter: blur(2px) saturate(170%) brightness(1.06);
+      box-shadow:
+        inset 0 1px 0 rgba(245, 251, 255, .28),
+        inset 1px 0 1px rgba(238, 249, 255, .08),
+        inset 0 -1px 0 rgba(171, 212, 255, .14),
+        0 5px 18px rgba(0, 5, 17, .15),
+        0 1px 4px rgba(0, 5, 17, .08);
+      transform: perspective(650px) translate3d(var(--glass-x), var(--glass-y), 0) rotateX(var(--glass-rx)) rotateY(var(--glass-ry)) scale(var(--glass-sx), var(--glass-sy));
+      pointer-events: auto;
+    }
+    .glass::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      padding: 1px;
+      border-radius: inherit;
+      background: conic-gradient(from calc(25deg + var(--glass-ry) * 3), rgba(255, 255, 255, .04), rgba(255, 255, 255, .65) 18%, rgba(209, 236, 255, .08) 35%, rgba(255, 255, 255, .03) 56%, rgba(191, 223, 255, .38) 77%, rgba(255, 255, 255, .06));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+    .glass::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(ellipse at var(--glass-gx) var(--glass-gy), rgba(239, 250, 255, .6), transparent 62%);
+      opacity: calc(.12 + var(--glass-energy) * .25);
+      pointer-events: none;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 50px;
+      padding: 0 20px 0 16px;
+      color: var(--ink);
+      font: inherit;
+      cursor: pointer;
+    }
+    .brand-icon { width: 17px; height: 17px; color: var(--accent); }
+    .brand-word { padding-top: 2px; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; }
+    .theme-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      place-items: center;
+      width: 104px;
+      height: 50px;
+      padding: 4px;
+      color: var(--ink);
+      cursor: pointer;
+      pointer-events: auto;
+    }
+    .theme-knob {
+      position: absolute;
+      top: 4px;
+      bottom: 4px;
+      left: 4px;
+      width: 46px;
+      border-radius: 999px;
+      border: 1px solid rgba(239, 249, 255, .28);
+      background: linear-gradient(145deg, rgba(243, 250, 255, .22), rgba(218, 238, 255, .065));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .27), 0 2px 6px rgba(0, 8, 24, .12);
+      transform: translate3d(var(--knob-x, 50px), 0, 0) scale(var(--knob-sx, 1), var(--knob-sy, 1));
+      pointer-events: none;
+    }
+    .mode-icon {
+      position: relative;
+      z-index: 1;
+      width: 17px;
+      height: 17px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: .45;
+    }
+    .mode-moon, body[data-theme="light"] .mode-sun { opacity: 1; }
+    body[data-theme="light"] .mode-moon { opacity: .45; }
+    body[data-theme="light"] .theme-toggle { --knob-x: 0px; }
+    body[data-theme="light"] .glass { background-color: rgba(245, 251, 255, .19); }
+    .scene-track {
+      position: relative;
+    }
+    .hero { position: relative; height: 100svh; height: 100dvh; }
+    .title-wrap {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: min(82vw, 1140px);
+      transform: translate(-50%, calc(-50% + var(--center-y, 0px))) scale(var(--title-scale, 1));
+    }
+    .name {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+      font-weight: 400;
+    }
+    .name-first-scene {
+      position: relative;
+      display: block;
+      width: max-content;
+      align-self: center;
+      perspective: 1050px;
+      perspective-origin: 50% 50%;
+      transform: translateX(var(--center-x, 0px));
+    }
+    .name-first {
+      position: relative;
+      display: flow-root;
+      padding-left: .085em;
+      font-size: min(20vw, 27svh, 296px);
+      line-height: .81;
+      letter-spacing: -.085em;
+      transform-style: preserve-3d;
+      transform:
+        translate3d(calc(var(--px) * -4px), calc(var(--py) * -2px), 0)
+        rotateX(calc(18deg + var(--py) * 3deg))
+        rotateY(calc(-13deg + var(--px) * 3deg));
+    }
+    .type-slice {
+      position: absolute;
+      inset: 0;
+      display: block;
+      padding: inherit;
+      color: var(--solid-back);
+      color: color-mix(in srgb, var(--solid-front) var(--slice-mix), var(--solid-back));
+      -webkit-text-fill-color: currentColor;
+      -webkit-text-stroke: .32px currentColor;
+      white-space: pre;
+      text-shadow: none;
+      pointer-events: none;
+      transform: translateZ(calc(-1 * var(--slice-depth)));
+    }
+    .type-slice-back {
+      text-shadow: 0 7px 18px rgba(0, 5, 22, .25);
+    }
+    .type-face {
+      position: relative;
+      z-index: 1;
+      display: block;
+      padding: .22em .32em .28em .18em;
+      margin: -.22em -.32em -.28em -.18em;
+      color: var(--ink);
+      transform: translateZ(.1px);
+      -webkit-text-stroke: .18px rgba(225, 243, 255, .24);
+      paint-order: stroke fill;
+    }
+    @supports ((background-clip: text) or (-webkit-background-clip: text)) {
+      .type-face {
+        background-image:
+          linear-gradient(115deg, transparent 38%, var(--type-sheen) 49%, transparent 60%),
+          linear-gradient(165deg, var(--type-top) 13%, var(--type-middle) 45%, var(--type-top) 56%, var(--type-bottom) 100%);
+        background-size: 260% 100%, 100% 100%;
+        background-position: 170% 0, 0 0;
+        background-repeat: no-repeat;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: type-sheen 16s ease-in-out infinite;
+      }
+      .name-first .type-face {
+        background-image:
+          linear-gradient(112deg, transparent 35%, rgba(169, 216, 255, .18) 44%, rgba(255, 255, 255, .95) 51%, rgba(199, 231, 255, .25) 57%, transparent 65%),
+          linear-gradient(165deg, var(--type-top) 13%, var(--type-middle) 45%, var(--type-top) 56%, var(--type-bottom) 100%);
+        background-size: 240% 100%, 100% 100%;
+        animation: kim-sheen 7.5s ease-in-out infinite;
+      }
+      .name-second .type-face {
+        background-image:
+          linear-gradient(115deg, transparent 38%, var(--type-sheen) 49%, transparent 60%),
+          linear-gradient(170deg, var(--type-blue-top) 8%, var(--accent) 52%, var(--type-blue-bottom) 100%);
+        animation-delay: -3s;
+      }
+    }
+    @keyframes type-sheen {
+      0%, 62% { background-position: 170% 0, 0 0; }
+      88%, 100% { background-position: -70% 0, 0 0; }
+    }
+    @keyframes kim-sheen {
+      0%, 8% {
+        background-position: 150% 0, 0 0;
+        filter: drop-shadow(0 0 3px rgba(161, 210, 255, .04));
+      }
+      29% {
+        filter: drop-shadow(0 0 11px rgba(193, 230, 255, .23));
+      }
+      53%, 100% {
+        background-position: -70% 0, 0 0;
+        filter: drop-shadow(0 0 3px rgba(161, 210, 255, .04));
+      }
+    }
+    .name-second-scene {
+      position: relative;
+      display: block;
+      margin-top: -.065em;
+      font-size: min(26vw, 35svh, 390px);
+      perspective: 1050px;
+      perspective-origin: 50% 40%;
+      transform: translateX(var(--center-x, 0px));
+    }
+    .name-second {
+      position: relative;
+      display: flow-root;
+      width: max-content;
+      margin: 0 auto;
+      padding-right: .18em;
+      color: var(--accent);
+      font-family: "Editorial Serif", Georgia, serif;
+      font-size: inherit;
+      font-style: italic;
+      font-weight: 400;
+      line-height: .82;
+      letter-spacing: -.078em;
+      transform-style: preserve-3d;
+      transform-origin: 50% 45%;
+      transform:
+        translate3d(calc(var(--px) * 7px), calc(var(--py) * 3px), 0)
+        rotateX(calc(33deg + var(--py) * 2deg))
+        rotateY(calc(-14deg + var(--px) * 2deg))
+        rotateZ(-5deg);
+      text-shadow: 0 0 65px rgba(77, 136, 218, .075);
+    }
+    .name-second .type-face {
+      color: var(--accent);
+      text-shadow: 0 3px 15px rgba(13, 40, 78, .12);
+    }
+    .is-away .star,
+    .is-away .star-layer,
+    .is-away .star-rotating .spark,
+    .is-away .star-traveler,
+    .is-away .atmosphere,
+    .is-away .type-face { animation-play-state: paused; }
+    @media (max-width: 700px) {
+      .topbar { padding-top: 21px; }
+      .brand { min-height: 48px; padding-inline: 13px 16px; gap: 8px; }
+      .brand-icon { width: 15px; height: 15px; }
+      .brand-word { font-size: 9px; letter-spacing: .13em; }
+      .title-wrap { width: 88vw; }
+      .name-first { font-size: min(29vw, 25svh); line-height: .9; }
+      .name-second-scene { font-size: min(36vw, 32svh); margin-top: -.045em; perspective: 700px; }
+      .name-second { line-height: 1; letter-spacing: -.085em; padding-right: .2em; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      .topbar { padding-top: 15px; }
+      .name-first { font-size: min(20vw, 25svh); }
+      .name-second-scene { font-size: min(26vw, 32svh); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .star-layer { will-change: auto; }
+      .star-traveler { left: var(--still-x); top: var(--still-y); }
+      .star-trail { display: none; }
+    }
+  </style>
+  <link rel="stylesheet" href="/assets/info.css">
+  <link rel="stylesheet" href="/assets/material.css">
+</head>
+<body>
+  <svg class="icon-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="spark" viewBox="0 0 100 100">
+      <path d="M50 0C49.4 31 48.3 43.2 43.8 47.4C39.3 49.2 27.2 49.5 0 50C27.2 50.5 39.3 50.8 43.8 52.6C48.3 56.8 49.4 69 50 100C50.6 69 51.7 56.8 56.2 52.6C60.7 50.8 72.8 50.5 100 50C72.8 49.5 60.7 49.2 56.2 47.4C51.7 43.2 50.6 31 50 0Z"/>
+    </symbol>
+  </svg>
+  <main class="page" id="top">
+    <div class="universe" aria-hidden="true">
+    <div class="atmosphere" aria-hidden="true"></div>
+    <canvas id="nebula" aria-hidden="true"></canvas>
+    <div class="sky" aria-hidden="true"></div>
+    </div>
+    <header class="topbar">
+      <div class="section-nav" id="section-nav">
+        <button class="brand glass" id="info-toggle" type="button" aria-label="TOP · 목차 열기" aria-controls="section-index" aria-expanded="false">
+          <svg class="document-icon" viewBox="0 0 20 22" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.5 2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7.5L11.5 2Z"/><path d="M11 2v6h6M6.5 12h7M6.5 15.5h4.5"/></svg>
+          <span class="chapter-label" id="current-section" aria-hidden="true">TOP</span>
+          <svg class="index-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
+        </button>
+        <nav class="toc-sheet" id="section-index" aria-label="문서 목차" data-lenis-prevent hidden>
+          <div class="toc-caption">목차</div>
+          <ol class="toc-list">
+            <li><a class="toc-link" href="#top" data-section-link data-label="TOP" aria-current="location"><span class="toc-number" aria-hidden="true"></span><span>TOP</span><span class="toc-marker" aria-hidden="true"></span></a></li>
+            <li><a class="toc-link" href="#info" data-section-link data-label="INFO"><span class="toc-number" aria-hidden="true"></span><span>INFO</span><span class="toc-marker" aria-hidden="true"></span></a></li>
+          </ol>
+        </nav>
+      </div>
+      <button class="theme-toggle glass" type="button" aria-label="어두운 테마" aria-pressed="true" title="테마 전환">
+        <span class="theme-knob" aria-hidden="true"></span>
+        <svg class="mode-icon mode-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.8"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.5 1.5m11.2 11.2 1.5 1.5M4.9 19.1l1.5-1.5M17.6 6.4l1.5-1.5"/></svg>
+        <svg class="mode-icon mode-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 13.1A8.9 8.9 0 0 1 10.9 3.2 9 9 0 1 0 20.8 13.1Z"/></svg>
+      </button>
+    </header>
+    <div class="scene-track">
+    <section class="hero" id="intro" aria-labelledby="portfolio-title">
+      <div class="title-wrap">
+        <h1 class="name" id="portfolio-title" aria-label="Kim Week">
+          <span class="name-first-scene" aria-hidden="true"><span class="name-first" data-word="KIM" data-depth=".085"><span class="type-face">KIM</span></span></span>
+          <span class="name-second-scene" aria-hidden="true"><span class="name-second" data-word="WEEK" data-depth=".068"><span class="type-face">WEEK</span></span></span>
+        </h1>
+      </div>
+      <button class="scroll-cue" type="button" aria-label="아래로 이동해 정보 보기" data-open-info><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M12 4v15m-6-6 6 6 6-6"/></svg></button>
+    </section>
+    <section class="info-scene" id="info" aria-labelledby="info-title">
+      <div class="info-content">
+        <h2 class="info-heading" id="info-title" tabindex="-1">Info.</h2>
+        <div class="info-board">
+          <div class="info-panel glass-panel time-panel">
+            <div class="clock-orbit" aria-hidden="true"><i></i><i></i><svg class="spark"><use href="#spark"/></svg></div>
+            <div class="time-heading"><span class="info-label">내 기준 시간</span></div>
+            <button class="clock-button" type="button" id="clock-button" aria-label="서울 기준 시간 · 12시간 표시로 전환" title="12시간 / 24시간 전환">
+              <span class="clock-main"><span class="clock-period" id="clock-period" aria-hidden="true"></span><time class="clock-value" id="clock-value">—:—</time><span class="clock-seconds" id="clock-seconds" aria-hidden="true">00</span></span>
+              <span class="clock-meta" id="clock-meta">GMT+9</span>
+            </button>
+            <span class="clock-date" id="clock-date"></span>
+          </div>
+          <div class="info-panel glass-panel presence-panel">
+            <div><span class="info-label">Discord</span><div class="presence-word" id="discord-status" role="status" aria-live="polite">확인 중</div></div>
+            <span class="status-orb" id="status-orb" aria-hidden="true"></span>
+          </div>
+          <div class="info-panel glass-panel visits-panel">
+            <div class="visit-item"><span class="info-label">오늘 방문</span><strong class="visit-value" id="today-visits">—</strong></div>
+            <div class="visit-item"><span class="info-label">누적 방문</span><strong class="visit-value" id="total-visits">—</strong></div>
+          </div>
+          <nav class="info-links" aria-label="프로필 링크">
+            <a class="info-link glass" href="https://www.roblox.com/users/3301201431/profile" target="_blank" rel="noopener noreferrer"><span class="link-mark roblox-mark" aria-hidden="true"></span><span class="link-copy"><span>Roblox</span><small>Kim_W3ek</small></span><svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a>
+            <a class="info-link glass" href="https://discord.gg/qmwMGWMcFZ" target="_blank" rel="noopener noreferrer"><svg class="link-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.5 5.5a18 18 0 0 0-4.2-1.3l-.5 1a15 15 0 0 0-5.6 0l-.5-1a18 18 0 0 0-4.2 1.3C1.9 9.2 1.2 12.8 1.6 16.3a17 17 0 0 0 5.2 2.6l1.1-1.8-1.5-.7.4-.3a13.9 13.9 0 0 0 10.4 0l.4.3-1.5.7 1.1 1.8a17 17 0 0 0 5.2-2.6c.5-4.1-.8-7.7-2.9-10.8ZM8.5 14.3c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Zm7 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Z"/></svg><span class="link-copy"><span>Discord</span><small>서버 방문</small></span><svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a>
+            <a class="info-link glass" href="https://github.com/KimWeek" target="_blank" rel="noopener noreferrer"><svg class="link-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m8 5-6 7 6 7m8-14 6 7-6 7m-3-16-2 18"/></svg><span class="link-copy"><span>GitHub</span><small>KimWeek</small></span><svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a>
+          </nav>
+        </div>
+        <div class="info-contacts">
+          <button class="copy-id" id="copy-discord" type="button" aria-label="Discord ID kim_week 복사"><span class="contact-kind">Discord ID</span><span id="discord-id">@kim_week</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="3"/><path d="M15 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3"/></svg></button>
+          <a class="contact-email" id="contact-email" href="mailto:week4452@gmail.com"><span class="contact-kind">Email</span><span>week4452@gmail.com</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a>
+        </div>
+      </div>
+    </section>
+    </div>
+  </main>
+  <div class="copy-notice" id="copy-notice" role="status" aria-live="polite"></div>
+  <script>
+    const root = document.documentElement;
+    const page = document.querySelector(".page");
+    const motionQuery = matchMedia("(prefers-reduced-motion: reduce)");
+    const finePointer = matchMedia("(pointer: fine)");
+    const compact = matchMedia("(max-width: 700px)").matches;
+    document.querySelectorAll("[data-word]").forEach((word) => {
+      const face = word.querySelector(".type-face");
+      const layerCount = compact ? 16 : 20;
+      const depth = Number(word.dataset.depth);
+      for (let index = layerCount; index >= 1; index -= 1) {
+        const ratio = index / layerCount;
+        const slice = document.createElement("span");
+        slice.className = "type-slice" + (index === layerCount ? " type-slice-back" : "");
+        slice.textContent = word.dataset.word;
+        slice.setAttribute("aria-hidden", "true");
+        slice.style.setProperty("--slice-depth", `${(depth * ratio).toFixed(6)}em`);
+        slice.style.setProperty("--slice-mix", `${(18 + (1 - ratio) * 64).toFixed(2)}%`);
+        word.insertBefore(slice, face);
+      }
+    });
+    let frame = 0;
+    let pointerX = 0;
+    let pointerY = 0;
+    function paintPointer() {
+      root.style.setProperty("--px", pointerX.toFixed(3));
+      root.style.setProperty("--py", pointerY.toFixed(3));
+      frame = 0;
+    }
+    page.addEventListener("pointermove", (event) => {
+      if (motionQuery.matches || !finePointer.matches) return;
+      pointerX = event.clientX / innerWidth - .5;
+      pointerY = event.clientY / innerHeight - .5;
+      if (!frame) frame = requestAnimationFrame(paintPointer);
+    }, { passive: true });
+    page.addEventListener("pointerleave", () => {
+      pointerX = 0;
+      pointerY = 0;
+      if (!frame) frame = requestAnimationFrame(paintPointer);
+    });
+    motionQuery.addEventListener("change", () => {
+      if (motionQuery.matches) {
+        pointerX = 0;
+        pointerY = 0;
+        paintPointer();
+      }
+    });
+    document.addEventListener("visibilitychange", () => page.classList.toggle("is-away", document.hidden));
+
+    const themeButton = document.querySelector(".theme-toggle");
+    function applyTheme(light) {
+      document.body.dataset.theme = light ? "light" : "dark";
+      themeButton.setAttribute("aria-label", "어두운 테마");
+      themeButton.setAttribute("aria-pressed", String(!light));
+      document.querySelector('meta[name="theme-color"]').content = light ? "#f5f4f0" : "#030917";
+      dispatchEvent(new CustomEvent("portfolio-themechange", { detail: { light } }));
+    }
+    try { applyTheme(localStorage.getItem("kw-portfolio-theme") === "light"); } catch {}
+    themeButton.addEventListener("click", () => {
+      const light = document.body.dataset.theme !== "light";
+      applyTheme(light);
+      try { localStorage.setItem("kw-portfolio-theme", light ? "light" : "dark"); } catch {}
+    });
+  </script>
+  <script type="module" src="/assets/space.js"></script>
+  <script type="module" src="/assets/stars.js"></script>
+  <script type="module" src="/assets/liquid.js"></script>
+  <script type="module" src="/assets/info.js"></script>
+  <script type="module" src="/assets/typography.js"></script>
+  <script type="module" src="/assets/scene.js"></script>
+  <script data-goatcounter="https://kimweek.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</body>
+</html>
