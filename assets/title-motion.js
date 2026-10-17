@@ -22,6 +22,7 @@ function startTitleMotion() {
     heading.style.setProperty('--title-y', y.toFixed(4));
   }
   function reset(immediate = false) {
+    if (immediate && !dirty && !x && !y && !targetX && !targetY) { last = 0; return; }
     targetX = targetY = 0; returning = true;
     if (immediate) { x = y = last = 0; dirty = false; paint(); }
     else { dirty = true; requestFrame(); }

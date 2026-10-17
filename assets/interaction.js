@@ -15,6 +15,7 @@ function startInteraction(){
     card.node.style.setProperty('--spot-x',((card.x+.5)*100).toFixed(2)+'%');card.node.style.setProperty('--spot-y',((card.y+.5)*100).toFixed(2)+'%');
   }
   function reset(immediate=false){
+    if(immediate&&!dirty&&!active&&!groupX&&!groupY&&!targetX&&!targetY&&cards.every(card=>!card.x&&!card.y&&!card.tx&&!card.ty)){rect=null;last=0;return;}
     for(const card of cards){card.tx=card.ty=0;card.node.classList.remove('is-pointed');if(immediate){card.x=card.y=0;paintCard(card);}}
     active=null;rect=null;targetX=targetY=0;returning=true;
     if(immediate){groupX=groupY=last=0;dirty=false;paintGroup();}else{dirty=true;requestFrame();}
