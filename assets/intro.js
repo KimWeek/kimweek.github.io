@@ -145,13 +145,20 @@ function startIntro() {
   if(!stage||!page)return;
   const motion=matchMedia('(prefers-reduced-motion: reduce)');
   const touch=matchMedia('(hover: none), (pointer: coarse)').matches;
+  if(touch){
+    const meter=stage.querySelector?.('.flat-progress');
+    if(meter){meter.classList.add('flat-progress-mobile');meter.setAttribute('aria-hidden','true');stage.append(meter);}
+  }
   const skip=document.getElementById('intro-skip'),progress=document.getElementById('intro-progress'),announcement=document.getElementById('intro-announcement');
   const fills=[...stage.querySelectorAll('[data-intro-fill]')],values=[...stage.querySelectorAll('[data-intro-value]')],states=[...stage.querySelectorAll('[data-intro-state]')];
   let weight=0,ready=false,phase='loading',shown=0,integer=-1,frame=0,last=performance.now(),started=last,completeTimer=0,revealTimer=0,returnFocus=false;
   const wire=createIntroWireframe(stage),grid=createIntroGrid(stage,motion);wire.paint(last,true);grid.paint(last,true);
   page.inert=true;page.setAttribute('aria-busy','true');
   function paint(value) {
-    for(const fill of fills)fill.style.transform=`scaleX(${(value/100).toFixed(4)})`;
+    for(const fill of fills){
+      if(touch)fill.style.width=`${Math.max(0,Math.min(100,value)).toFixed(3)}%`;
+      else fill.style.transform=`scaleX(${(value/100).toFixed(4)})`;
+    }
     const n=Math.floor(value);if(n===integer)return;
     integer=n;for(const node of values)node.textContent=String(n).padStart(2,'0');
     progress.setAttribute('aria-valuenow',String(n));

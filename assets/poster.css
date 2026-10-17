@@ -69,4 +69,9 @@ body[data-theme='light'] .entry-loader{--flat-paper:#e3e9f2;--flat-ink:#1c2b45;-
   .entry-loader[data-phase='opening'] .flat-panel-left{transform:translate3d(-100%,0,0)}
   .entry-loader[data-phase='opening'] .flat-panel-right{transform:translate3d(100%,0,0)}
   .intro-skip{top:calc(100svh - var(--intro-bottom) + var(--intro-gap));bottom:auto}
+  .flat-panel .flat-progress{display:none}
+  .flat-progress-mobile{z-index:2;top:calc(100svh - var(--intro-bottom));bottom:auto;left:calc((100% - var(--intro-width))/2);transform:translateY(-100%);transition:opacity 180ms ease}
+  .flat-progress-mobile .flat-meter{height:2px;overflow:visible}
+  .flat-progress-mobile .flat-meter-fill{width:0;transform:none;will-change:auto}
+  .entry-loader[data-phase='opening'] .flat-progress-mobile{opacity:0;pointer-events:none}
 }
