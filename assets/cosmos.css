@@ -1,4 +1,4 @@
-.info-content{transform:translate3d(var(--info-x,0px),var(--info-y,0px),0)}
+.info-content{transform:perspective(1500px) translate3d(var(--info-x,0px),var(--info-y,0px),0) rotateX(calc(var(--info-tilt-y,0)*-6deg)) rotateY(calc(var(--info-tilt-x,0)*8deg));transform-origin:center}
 .info-panel,.info-link{--card-x:0;--card-y:0;--spot-x:50%;--spot-y:50%;transform:perspective(1000px) rotateX(calc(var(--card-y)*-4deg)) rotateY(calc(var(--card-x)*4deg));transform-origin:center;backface-visibility:hidden}
 .info-link:hover,.info-link:focus-visible{transform:perspective(1000px) rotateX(calc(var(--card-y)*-4deg)) rotateY(calc(var(--card-x)*4deg)) translateY(-2px)}
 .info-panel::after,.info-link::after{background:radial-gradient(420px circle at var(--spot-x) var(--spot-y),#acd4ff16,transparent 62%);opacity:.45;transition:opacity .25s;z-index:0}
