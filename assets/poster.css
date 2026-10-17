@@ -53,3 +53,20 @@ body[data-theme='light'] .entry-loader{--flat-paper:#e3e9f2;--flat-ink:#1c2b45;-
 @media(max-width:700px){.copy-id,.contact-email{min-height:44px}}
 @media(hover:none),(pointer:coarse){.name{transform:none}.hero{touch-action:pan-y pinch-zoom}}
 @media(hover:none),(pointer:coarse){.universe{inset:0 0 auto;height:100vh;height:100lvh}.hero{height:100vh;height:100svh}.info-scene{min-height:100vh;min-height:100svh}}
+@media(hover:none),(pointer:coarse){
+  .info-content,.info-panel,.info-link,.info-link:hover,.info-link:focus-visible{transform:none!important;transform-style:flat;backface-visibility:visible;will-change:auto}
+  .info-panel>*,.info-link>*{z-index:auto;backface-visibility:visible}
+  .info-panel::after,.info-link::after{display:none}
+  .topbar .glass{-webkit-backdrop-filter:none;backdrop-filter:none}
+  .link-arrow,.info-link:hover .link-arrow{transform:none;transition:none}
+  .entry-loader{inset:0 0 auto;height:100vh;height:100lvh}
+  .flat-panel{right:auto;width:50%;overflow:hidden;clip-path:none;background:var(--flat-paper);transition:transform 850ms var(--flat-ease)}
+  .flat-panel-left{left:0}.flat-panel-right{left:50%}
+  .flat-panel .flat-visual{inset:0 auto auto 0;width:200%;height:100vh;height:100svh}
+  .flat-panel-right .flat-visual{left:-100%}
+  .flat-heading>span,.flat-wireframe{animation:none}
+  .intro-dimmer{transition:opacity 900ms cubic-bezier(.4,0,.3,1)}
+  .entry-loader[data-phase='opening'] .flat-panel-left{transform:translate3d(-100%,0,0)}
+  .entry-loader[data-phase='opening'] .flat-panel-right{transform:translate3d(100%,0,0)}
+  .intro-skip{top:calc(100svh - var(--intro-bottom) + var(--intro-gap));bottom:auto}
+}

@@ -73,7 +73,7 @@ export function createIntroGrid(stage,motion) {
     if(disposed||(!force&&((!dirty&&!pointerDirty&&((!target&&!strength)||(target&&strength===1)))||now-last<15)))return;
     const dt=Number.isFinite(last)?Math.min(80,now-last):33;last=now;
     if(dirty){
-      const rect=stage.getBoundingClientRect();width=rect.width;height=rect.height;if(!width||!height)return;
+      const rect=stage.querySelector?.('.flat-visual')?.getBoundingClientRect()||stage.getBoundingClientRect();width=rect.width;height=rect.height;if(!width||!height)return;
       ratio=Math.min(window.devicePixelRatio||1,1.25,Math.sqrt(1200000/(width*height)));
       for(const {canvas}of surfaces){canvas.width=Math.round(width*ratio);canvas.height=Math.round(height*ratio);}
       dirty=false;
@@ -144,6 +144,7 @@ function startIntro() {
   const stage=document.getElementById('entry-loader'),page=document.querySelector('.page');
   if(!stage||!page)return;
   const motion=matchMedia('(prefers-reduced-motion: reduce)');
+  const touch=matchMedia('(hover: none), (pointer: coarse)').matches;
   const skip=document.getElementById('intro-skip'),progress=document.getElementById('intro-progress'),announcement=document.getElementById('intro-announcement');
   const fills=[...stage.querySelectorAll('[data-intro-fill]')],values=[...stage.querySelectorAll('[data-intro-value]')],states=[...stage.querySelectorAll('[data-intro-state]')];
   let weight=0,ready=false,phase='loading',shown=0,integer=-1,frame=0,last=performance.now(),started=last,completeTimer=0,revealTimer=0,returnFocus=false;
@@ -174,7 +175,11 @@ function startIntro() {
     dispatchEvent(new Event('portfolio-reset-top'));
     phase='opening';stage.dataset.phase='opening';
     if(motion.matches||document.hidden)finish();
-    else {revealTimer=setTimeout(finish,INTRO.reveal);if(!frame)frame=requestAnimationFrame(tick);}
+    else {
+      revealTimer=setTimeout(finish,touch?1000:INTRO.reveal);
+      if(touch){cancelAnimationFrame(frame);frame=0;wire.dispose();grid.dispose();}
+      else if(!frame)frame=requestAnimationFrame(tick);
+    }
   }
   function complete() {
     if(phase!=='loading')return;

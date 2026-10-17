@@ -3,7 +3,7 @@ const jobs = [];
 let frame = 0, motion;
 function tick(now) {
   frame = 0;
-  if (document.hidden) return;
+  if (document.hidden || document.documentElement?.classList?.contains('is-loading')) return;
   for (const job of jobs) job.run(now);
   if (!motion.matches) requestFrame();
 }
@@ -19,6 +19,8 @@ export function onFrame(run, priority = 0) {
       else requestFrame();
     });
     motion.addEventListener('change', requestFrame);
+    addEventListener('portfolio-introend', requestFrame);
+    addEventListener('portfolio-intro-abort', requestFrame);
   }
   jobs.push({ run, priority }); jobs.sort((a,b) => a.priority - b.priority);
   requestFrame();

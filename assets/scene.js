@@ -32,6 +32,7 @@ function startScroll() {
     label: link.dataset.label, top: 0
   })).filter(chapter => chapter.target);
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
+  const touch = matchMedia('(hover: none), (pointer: coarse)');
   let lenis, showingInfo = null, lastY = -1, height = 1, infoTop = 0;
   let current = null, indexOpen = false, labelAnimation, indexAnimation;
   function updateToggleLabel() {
@@ -41,7 +42,7 @@ function startScroll() {
     indexOpen = open; index.hidden = !open;
     toggle.setAttribute('aria-expanded',String(open)); updateToggleLabel();
     indexAnimation?.cancel();
-    if (open && !motion.matches) indexAnimation = index.animate?.([
+    if (open && !motion.matches && !touch.matches) indexAnimation = index.animate?.([
       {opacity:0,transform:'translateY(-6px) scale(.98)'},
       {opacity:1,transform:'translateY(0) scale(1)'}
     ],{duration:230,easing:'cubic-bezier(.22,1,.36,1)'});
@@ -64,7 +65,7 @@ function startScroll() {
         else item.link.removeAttribute('aria-current');
       });
       updateToggleLabel(); labelAnimation?.cancel();
-      if (!initial && !motion.matches) labelAnimation = label.animate?.([
+      if (!initial && !motion.matches && !touch.matches) labelAnimation = label.animate?.([
         {opacity:.3,transform:'translateY(4px)'},{opacity:1,transform:'translateY(0)'}
       ],{duration:180,easing:'ease-out'});
     }
@@ -91,7 +92,7 @@ function startScroll() {
   }
   function configure() {
     lenis?.destroy(); lenis = null;
-    if (!motion.matches) {
+    if (!motion.matches && !touch.matches) {
       try {
         lenis = new Lenis({
           autoRaf:false, lerp:.17, smoothWheel:true, syncTouch:false,
@@ -146,6 +147,7 @@ function startScroll() {
   });
   document.addEventListener('visibilitychange',() => { if (document.hidden) cancelMomentum(); });
   motion.addEventListener('change',configure);
+  touch.addEventListener('change',configure);
   if (document.fonts) document.fonts.ready.then(measure);
   onFrame(now => { lenis?.raf(now); sync(); },-10);
   measure(); configure(); resetToTop();

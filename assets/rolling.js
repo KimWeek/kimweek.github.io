@@ -4,7 +4,14 @@ export function rollingText(element, text, immediate = false) {
   text = String(text);
   if (element.dataset.value === text) return;
   const reduce = typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const touch = typeof matchMedia !== "undefined" && matchMedia("(hover: none), (pointer: coarse)").matches;
   let state = reels.get(element);
+  if (touch) {
+    state?.slots.forEach(slot => clearTimeout(slot?.timer));
+    reels.delete(element); element.textContent = text;
+    element.dataset.value = text; element.setAttribute("aria-label", text);
+    return;
+  }
   if (!state || state.text.length !== text.length || element.children.length !== text.length) {
     state?.slots.forEach(slot => clearTimeout(slot?.timer));
     element.replaceChildren();
