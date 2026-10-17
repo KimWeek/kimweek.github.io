@@ -116,14 +116,22 @@ export function fitTypography() {
 }
 
 if (typeof document !== "undefined") {
-  let frame = 0;
-  const schedule = () => {
-    if (frame) cancelAnimationFrame(frame);
-    frame = requestAnimationFrame(() => { frame = 0; fitTypography(); });
+  const hero = document.getElementById("intro");
+  let frame = 0, lastWidth = -1, lastHeight = -1, forceFit = false;
+  const schedule = (force = false) => {
+    forceFit ||= force;
+    if (!forceFit && hero.clientWidth === lastWidth && hero.clientHeight === lastHeight) return;
+    if (frame) return;
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      if (!forceFit && hero.clientWidth === lastWidth && hero.clientHeight === lastHeight) return;
+      forceFit = false; lastWidth = hero.clientWidth; lastHeight = hero.clientHeight;
+      fitTypography();
+    });
   };
   schedule();
-  if (document.fonts) document.fonts.ready.then(schedule);
-  addEventListener("resize", schedule, { passive: true });
-  addEventListener("orientationchange", schedule, { passive: true });
-  if (typeof ResizeObserver !== "undefined") new ResizeObserver(schedule).observe(document.getElementById("intro"));
+  if (document.fonts) document.fonts.ready.then(() => schedule(true));
+  addEventListener("resize", () => schedule(), { passive: true });
+  addEventListener("orientationchange", () => schedule(true), { passive: true });
+  if (typeof ResizeObserver !== "undefined") new ResizeObserver(() => schedule()).observe(hero);
 }

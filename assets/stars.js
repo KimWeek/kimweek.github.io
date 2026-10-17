@@ -68,7 +68,7 @@ function startStars() {
     if (document.hidden || !color) return;
     const worldY = Math.max(0,window.scrollY) / height;
     const cameraMoved = worldY !== lastCamera;
-    if (!force && !cameraMoved && now - last < 32) return;
+    if (!force && !cameraMoved && now - last < (compact ? 15 : 32)) return;
     const dt = lastTick ? Math.max(0,Math.min(.1,(now - lastTick) / 1000)) : 0;
     lastTick = now; last = now;
     lastCamera = worldY;
@@ -129,7 +129,7 @@ function startStars() {
   }
   addEventListener('portfolio-themechange',theme);
   addEventListener('portfolio-camerachange',() => {
-    draw(performance.now(),true);
+    if(compact&&!motion.matches)requestFrame();else draw(performance.now(),true);
   });
   addEventListener('resize',resize,{passive:true});
   document.addEventListener('visibilitychange',resume); motion.addEventListener('change',resume);

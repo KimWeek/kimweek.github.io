@@ -52,3 +52,4 @@ body[data-theme='light'] .entry-loader{--flat-paper:#e3e9f2;--flat-ink:#1c2b45;-
 .topbar,.info-scene{padding-left:max(var(--gutter),env(safe-area-inset-left));padding-right:max(var(--gutter),env(safe-area-inset-right))}
 @media(max-width:700px){.copy-id,.contact-email{min-height:44px}}
 @media(hover:none),(pointer:coarse){.name{transform:none}.hero{touch-action:pan-y pinch-zoom}}
+@media(hover:none),(pointer:coarse){.universe{inset:0 0 auto;height:100vh;height:100lvh}.hero{height:100vh;height:100svh}.info-scene{min-height:100vh;min-height:100svh}}

@@ -2,7 +2,7 @@ import { createNoiseAtlas } from "./noise.js";
 import { onFrame, requestFrame } from "./frame.js";
 
 export function renderSize(width, height, compact) {
-  const budget = compact ? 96000 : 160000;
+  const budget = compact ? 64000 : 160000;
   const scale = Math.min(compact ? .65 : .8, Math.sqrt(budget / Math.max(1, width * height)));
   return [Math.max(1, Math.round(width * scale)), Math.max(1, Math.round(height * scale))];
 }
@@ -69,10 +69,14 @@ async function startSpace() {
   let pixelScale = 1;
   let slowFrames = 0;
   function resize() {
-    viewportHeight = viewport.clientHeight || innerHeight;
+    const nextHeight = viewport.clientHeight || innerHeight;
     const size = renderSize(viewport.clientWidth || innerWidth, viewport.clientHeight || innerHeight, compact);
-    canvas.width = Math.max(1, Math.round(size[0] * pixelScale));
-    canvas.height = Math.max(1, Math.round(size[1] * pixelScale));
+    const nextWidth = Math.max(1, Math.round(size[0] * pixelScale));
+    const nextPixelHeight = Math.max(1, Math.round(size[1] * pixelScale));
+    if (viewportHeight === nextHeight && canvas.width === nextWidth && canvas.height === nextPixelHeight) return;
+    viewportHeight = nextHeight;
+    canvas.width = nextWidth;
+    canvas.height = nextPixelHeight;
     gl.viewport(0, 0, canvas.width, canvas.height);
     draw(performance.now(), true);
   }
@@ -80,7 +84,7 @@ async function startSpace() {
     if (lost || document.hidden) return;
     const worldY = Math.max(0,window.scrollY) / viewportHeight;
     const cameraMoved = worldY !== lastCamera;
-    if (!force && !cameraMoved && now - last < (compact ? 66 : 50)) return;
+    if (!force && !cameraMoved && now - last < (compact ? 40 : 50)) return;
     const delta = last < 0 ? 0 : Math.max(0, (now - last) / 1000);
     last = now;
     lastCamera = worldY;
@@ -112,7 +116,8 @@ async function startSpace() {
   }
   addEventListener("resize", resize, { passive: true });
   addEventListener("portfolio-camerachange", () => {
-    draw(performance.now(), true);
+    if (compact && !motion.matches) requestFrame();
+    else draw(performance.now(), true);
   });
   addEventListener("portfolio-themechange", (event) => {
     targetLight = event.detail.light ? 1 : 0;
