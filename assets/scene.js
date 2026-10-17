@@ -58,6 +58,7 @@ function startScroll() {
     const chapter = chapters.filter(chapter => y + height * .55 >= chapter.top).at(-1) || chapters[0];
     if (chapter && chapter !== current) {
       const initial = !current; current = chapter; label.textContent = chapter.label;
+      document.title = `Kim Week - ${chapter.label}`;
       chapters.forEach(item => {
         if (item === chapter) item.link.setAttribute('aria-current','location');
         else item.link.removeAttribute('aria-current');
