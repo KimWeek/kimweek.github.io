@@ -12,7 +12,7 @@ async function startSpace() {
   const viewport = document.querySelector(".universe");
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
   const compact = matchMedia("(max-width: 700px)").matches;
-  const gl = canvas.getContext("webgl", { alpha: false, antialias: false, depth: false, stencil: false, powerPreference: "low-power" });
+  const gl = canvas.getContext("webgl", { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false, powerPreference: "low-power" });
   if (!gl) return;
   const response = await fetch(new URL("./nebula.frag", import.meta.url));
   if (!response.ok) return;
@@ -137,4 +137,4 @@ async function startSpace() {
   resume();
 }
 
-if (typeof document !== "undefined") startSpace().catch(() => {});
+export const spaceReady = typeof document !== "undefined" ? startSpace().catch(() => {}) : Promise.resolve();

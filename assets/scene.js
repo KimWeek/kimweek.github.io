@@ -9,10 +9,10 @@ export function infoInView(scrollY, infoTop, viewportHeight) {
 }
 export function sectionEase(t) {
   t = Math.max(0,Math.min(1,t));
-  return t * t * t * (t * (t * 6 - 15) + 10);
+  return t ** 4 * (35 + t * (-84 + t * (70 - 20*t)));
 }
 export function sectionDuration(distance, viewportHeight) {
-  return Math.min(1.1,.62 + Math.sqrt(Math.abs(distance) / Math.max(1,viewportHeight)) * .22);
+  return Math.min(.85,.40 + Math.sqrt(Math.abs(distance) / Math.max(1,viewportHeight)) * .22);
 }
 export function smoothWheel(event) {
   if (event.type !== 'wheel' || event.ctrlKey || event.metaKey || event.shiftKey) return false;
@@ -82,6 +82,12 @@ function startScroll() {
   function cancelMomentum() {
     if (lenis?.isScrolling === 'smooth') lenis.scrollTo(window.scrollY,{immediate:true});
   }
+  function resetToTop() {
+    lenis?.stop();
+    window.scrollTo({top:0,left:0,behavior:'auto'});
+    lenis?.start();
+    sync(true);requestFrame();
+  }
   function configure() {
     lenis?.destroy(); lenis = null;
     if (!motion.matches) {
@@ -90,6 +96,7 @@ function startScroll() {
           autoRaf:false, lerp:.17, smoothWheel:true, syncTouch:false,
           respectReducedMotion:true, anchors:false,
           virtualScroll:({event}) => {
+            if (document.documentElement.classList.contains('is-loading')) return false;
             const smooth = smoothWheel(event);
             if (!smooth) cancelMomentum();
             return smooth;
@@ -120,7 +127,11 @@ function startScroll() {
   // No extra RAF/easing between the actual scroll value and the camera.
   addEventListener('scroll',() => { sync(); requestFrame(); },{passive:true});
   addEventListener('resize',measure,{passive:true});
-  addEventListener('pageshow',measure);
+  addEventListener('pageshow',event => {
+    measure();
+    if (event.persisted || document.documentElement.classList.contains('is-loading')) resetToTop();
+  });
+  addEventListener('portfolio-reset-top',resetToTop);
   addEventListener('keydown',event => {
     if (event.key === 'Escape' && indexOpen) { event.preventDefault(); setIndex(false,true); }
     if (['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' '].includes(event.key)) cancelMomentum();
@@ -136,6 +147,6 @@ function startScroll() {
   motion.addEventListener('change',configure);
   if (document.fonts) document.fonts.ready.then(measure);
   onFrame(now => { lenis?.raf(now); sync(); },-10);
-  measure(); configure();
+  measure(); configure(); resetToTop();
 }
 if (typeof document !== 'undefined') startScroll();

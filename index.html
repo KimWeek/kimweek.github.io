@@ -6,10 +6,29 @@
   <meta name="theme-color" content="#030917">
   <meta name="description" content="KIM WEEK — Portfolio">
   <title>KIM WEEK — Portfolio</title>
+  <script>
+    try {
+      history.scrollRestoration = "manual";
+      if (location.hash) history.replaceState(history.state, "", location.pathname + location.search);
+    } catch {}
+    window.scrollTo?.(0, 0);
+    document.documentElement.classList.add("is-loading");
+    window.__kwIntroFailSafe = setTimeout(() => {
+      window.scrollTo?.(0, 0);
+      dispatchEvent(new Event("portfolio-reset-top"));
+      document.documentElement.classList.remove("is-loading");
+      const page = document.querySelector(".page");
+      if (page) { page.inert = false; page.removeAttribute("aria-busy"); }
+      document.getElementById("entry-loader")?.remove();
+      dispatchEvent(new Event("resize"));
+      dispatchEvent(new Event("portfolio-intro-abort"));
+    }, 10000);
+  </script>
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
   <link rel="stylesheet" href="/assets/lenis.css">
   <link rel="preload" href="/assets/editorial-serif.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="/assets/manrope.woff" as="font" type="font/woff" crossorigin>
+  <link rel="preload" href="/assets/dm-serif-display.woff" as="font" type="font/woff" crossorigin>
   <style>
     @font-face {
       font-family: Editorial Serif;
@@ -51,6 +70,8 @@
     }
     * { box-sizing: border-box; }
     html { background: var(--bg); }
+    html, body { scrollbar-width: none; -ms-overflow-style: none; }
+    html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; width: 0; height: 0; }
     body {
       margin: 0;
       overflow: visible;
@@ -250,6 +271,8 @@
       top: 50%;
       left: 50%;
       width: min(82vw, 1140px);
+      perspective: 1050px;
+      perspective-origin: var(--view-x, 50%) var(--view-y, 50%);
       transform: translate(-50%, calc(-50% + var(--center-y, 0px))) scale(var(--title-scale, 1));
     }
     .name {
@@ -258,14 +281,19 @@
       flex-direction: column;
       margin: 0;
       font-weight: 400;
+      transform-style: preserve-3d;
+      transform-origin: var(--pivot-x, 50%) var(--pivot-y, 50%);
+      transform:
+        translate3d(calc(var(--title-x, 0) * 4px), calc(var(--title-y, 0) * 3px), 0)
+        rotateX(calc(var(--title-y, 0) * -16deg))
+        rotateY(calc(var(--title-x, 0) * 22deg));
     }
     .name-first-scene {
       position: relative;
       display: block;
       width: max-content;
       align-self: center;
-      perspective: 1050px;
-      perspective-origin: 50% 50%;
+      transform-style: preserve-3d;
       transform: translateX(var(--center-x, 0px));
     }
     .name-first {
@@ -276,10 +304,20 @@
       line-height: .81;
       letter-spacing: -.085em;
       transform-style: preserve-3d;
-      transform:
-        translate3d(calc(var(--px) * -4px), calc(var(--py) * -2px), 0)
-        rotateX(calc(18deg + var(--py) * 3deg))
-        rotateY(calc(-13deg + var(--px) * 3deg));
+    }
+    .type-shape {
+      position: relative;
+      display: flow-root;
+      transform-style: preserve-3d;
+      transform-origin: 50% 50%;
+      transform: var(--type-projection, none);
+    }
+    .type-corner {
+      position: absolute;
+      width: 0;
+      height: 0;
+      visibility: hidden;
+      pointer-events: none;
     }
     .type-slice {
       position: absolute;
@@ -293,7 +331,7 @@
       white-space: pre;
       text-shadow: none;
       pointer-events: none;
-      transform: translateZ(calc(-1 * var(--slice-depth)));
+      transform: translate3d(calc(var(--slice-depth) * .16), calc(var(--slice-depth) * .65), calc(-1 * var(--slice-depth)));
     }
     .type-slice-back {
       text-shadow: 0 7px 18px rgba(0, 5, 22, .25);
@@ -356,10 +394,11 @@
     .name-second-scene {
       position: relative;
       display: block;
-      margin-top: -.065em;
-      font-size: min(26vw, 35svh, 390px);
-      perspective: 1050px;
-      perspective-origin: 50% 40%;
+      width: max-content;
+      align-self: center;
+      margin-top: var(--line-gap, -.065em);
+      font-size: var(--week-font-size, min(26vw, 35svh, 390px));
+      transform-style: preserve-3d;
       transform: translateX(var(--center-x, 0px));
     }
     .name-second {
@@ -376,12 +415,6 @@
       line-height: .82;
       letter-spacing: -.078em;
       transform-style: preserve-3d;
-      transform-origin: 50% 45%;
-      transform:
-        translate3d(calc(var(--px) * 7px), calc(var(--py) * 3px), 0)
-        rotateX(calc(33deg + var(--py) * 2deg))
-        rotateY(calc(-14deg + var(--px) * 2deg))
-        rotateZ(-5deg);
       text-shadow: 0 0 65px rgba(77, 136, 218, .075);
     }
     .name-second .type-face {
@@ -399,15 +432,15 @@
       .brand { min-height: 48px; padding-inline: 13px 16px; gap: 8px; }
       .brand-icon { width: 15px; height: 15px; }
       .brand-word { font-size: 9px; letter-spacing: .13em; }
-      .title-wrap { width: 88vw; }
+      .title-wrap { width: 88vw; perspective: 700px; }
       .name-first { font-size: min(29vw, 25svh); line-height: .9; }
-      .name-second-scene { font-size: min(36vw, 32svh); margin-top: -.045em; perspective: 700px; }
+      .name-second-scene { font-size: var(--week-font-size, min(36vw, 32svh)); margin-top: var(--line-gap, -.045em); }
       .name-second { line-height: 1; letter-spacing: -.085em; padding-right: .2em; }
     }
     @media (max-height: 500px) and (orientation: landscape) {
       .topbar { padding-top: 15px; }
       .name-first { font-size: min(20vw, 25svh); }
-      .name-second-scene { font-size: min(26vw, 32svh); }
+      .name-second-scene { font-size: var(--week-font-size, min(26vw, 32svh)); }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -418,8 +451,27 @@
   </style>
   <link rel="stylesheet" href="/assets/info.css">
   <link rel="stylesheet" href="/assets/material.css">
+  <link rel="stylesheet" href="/assets/cosmos.css">
+  <link rel="stylesheet" href="/assets/intro.css">
+  <link rel="stylesheet" href="/assets/poster.css">
 </head>
 <body>
+  <div class="entry-loader" id="entry-loader" data-phase="loading">
+    <div class="intro-dimmer"></div>
+    <div class="flat-panel flat-panel-left" aria-hidden="true"><div class="flat-visual">
+  <canvas class="flat-grid" data-intro-grid aria-hidden="true"></canvas>
+  <div class="flat-composition"><div class="flat-heading"><span>KIM</span><span>WEEK</span></div><canvas class="flat-wireframe" data-intro-wire width="560" height="560" aria-hidden="true"></canvas></div>
+  <div class="flat-progress"><div class="flat-readout"><span class="flat-state" data-intro-state>로딩 중</span><span class="flat-count"><span data-intro-value>00</span><span class="flat-percent">%</span></span></div><div class="flat-meter"><div class="flat-meter-fill" data-intro-fill></div></div></div>
+</div></div>
+    <div class="flat-panel flat-panel-right" aria-hidden="true"><div class="flat-visual">
+  <canvas class="flat-grid" data-intro-grid aria-hidden="true"></canvas>
+  <div class="flat-composition"><div class="flat-heading"><span>KIM</span><span>WEEK</span></div><canvas class="flat-wireframe" data-intro-wire width="560" height="560" aria-hidden="true"></canvas></div>
+  <div class="flat-progress"><div class="flat-readout"><span class="flat-state" data-intro-state>로딩 중</span><span class="flat-count"><span data-intro-value>00</span><span class="flat-percent">%</span></span></div><div class="flat-meter"><div class="flat-meter-fill" data-intro-fill></div></div></div>
+</div></div>
+    <div class="intro-accessible" id="intro-progress" role="progressbar" aria-label="사이트 준비" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+    <span class="intro-accessible" id="intro-announcement" role="status" aria-live="polite">로딩 중</span>
+    <button class="intro-skip" id="intro-skip" type="button"><span>로딩 건너뛰기</span><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M3 9h11m-4-4 4 4-4 4"/></svg></button>
+  </div>
   <svg class="icon-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <symbol id="spark" viewBox="0 0 100 100">
       <path d="M50 0C49.4 31 48.3 43.2 43.8 47.4C39.3 49.2 27.2 49.5 0 50C27.2 50.5 39.3 50.8 43.8 52.6C48.3 56.8 49.4 69 50 100C50.6 69 51.7 56.8 56.2 52.6C60.7 50.8 72.8 50.5 100 50C72.8 49.5 60.7 49.2 56.2 47.4C51.7 43.2 50.6 31 50 0Z"/>
@@ -428,6 +480,7 @@
   <main class="page" id="top">
     <div class="universe" aria-hidden="true">
     <div class="atmosphere" aria-hidden="true"></div>
+    <div class="sky sky-distant" aria-hidden="true"></div>
     <canvas id="nebula" aria-hidden="true"></canvas>
     <div class="sky" aria-hidden="true"></div>
     </div>
@@ -456,11 +509,10 @@
     <section class="hero" id="intro" aria-labelledby="portfolio-title">
       <div class="title-wrap">
         <h1 class="name" id="portfolio-title" aria-label="Kim Week">
-          <span class="name-first-scene" aria-hidden="true"><span class="name-first" data-word="KIM" data-depth=".085"><span class="type-face">KIM</span></span></span>
-          <span class="name-second-scene" aria-hidden="true"><span class="name-second" data-word="WEEK" data-depth=".068"><span class="type-face">WEEK</span></span></span>
+          <span class="name-first-scene" aria-hidden="true"><span class="name-first" data-word="KIM" data-depth=".13"><span class="type-shape" data-top-scale=".48" data-bottom-scale="1.08"><span class="type-face">KIM</span></span></span></span>
+          <span class="name-second-scene" aria-hidden="true"><span class="name-second" data-word="WEEK" data-depth=".104"><span class="type-shape" data-top-scale="1.08" data-bottom-scale=".48"><span class="type-face">WEEK</span></span></span></span>
         </h1>
       </div>
-      <button class="scroll-cue" type="button" aria-label="아래로 이동해 정보 보기" data-open-info><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M12 4v15m-6-6 6 6 6-6"/></svg></button>
     </section>
     <section class="info-scene" id="info" aria-labelledby="info-title">
       <div class="info-content">
@@ -484,9 +536,9 @@
             <div class="visit-item"><span class="info-label">누적 방문</span><strong class="visit-value" id="total-visits">—</strong></div>
           </div>
           <nav class="info-links" aria-label="프로필 링크">
-            <a class="info-link glass" href="https://www.roblox.com/users/3301201431/profile" target="_blank" rel="noopener noreferrer"><span class="link-mark roblox-mark" aria-hidden="true"></span><span class="link-copy"><span>Roblox</span><small>Kim_W3ek</small></span><svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a>
+            <a class="info-link glass" href="https://www.roblox.com/users/3301201431/profile" target="_blank" rel="noopener noreferrer"><svg class="link-mark roblox-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.926 23.998 0 18.892 5.075.002 24 5.108ZM15.348 10.09l-5.282-1.453-1.414 5.273 5.282 1.453z"/></svg><span class="link-copy"><span>Roblox</span><small>Kim_W3ek</small></span><svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a>
             <a class="info-link glass" href="https://discord.gg/qmwMGWMcFZ" target="_blank" rel="noopener noreferrer"><svg class="link-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.5 5.5a18 18 0 0 0-4.2-1.3l-.5 1a15 15 0 0 0-5.6 0l-.5-1a18 18 0 0 0-4.2 1.3C1.9 9.2 1.2 12.8 1.6 16.3a17 17 0 0 0 5.2 2.6l1.1-1.8-1.5-.7.4-.3a13.9 13.9 0 0 0 10.4 0l.4.3-1.5.7 1.1 1.8a17 17 0 0 0 5.2-2.6c.5-4.1-.8-7.7-2.9-10.8ZM8.5 14.3c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Zm7 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Z"/></svg><span class="link-copy"><span>Discord</span><small>서버 방문</small></span><svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a>
-            <a class="info-link glass" href="https://github.com/KimWeek" target="_blank" rel="noopener noreferrer"><svg class="link-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m8 5-6 7 6 7m8-14 6 7-6 7m-3-16-2 18"/></svg><span class="link-copy"><span>GitHub</span><small>KimWeek</small></span><svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a>
+            <a class="info-link glass" href="https://github.com/KimWeek" target="_blank" rel="noopener noreferrer"><svg class="link-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/></svg><span class="link-copy"><span>GitHub</span><small>KimWeek</small></span><svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a>
           </nav>
         </div>
         <div class="info-contacts">
@@ -505,8 +557,9 @@
     const finePointer = matchMedia("(pointer: fine)");
     const compact = matchMedia("(max-width: 700px)").matches;
     document.querySelectorAll("[data-word]").forEach((word) => {
+      const shape = word.querySelector(".type-shape");
       const face = word.querySelector(".type-face");
-      const layerCount = compact ? 16 : 20;
+      const layerCount = compact ? 20 : 24;
       const depth = Number(word.dataset.depth);
       for (let index = layerCount; index >= 1; index -= 1) {
         const ratio = index / layerCount;
@@ -516,7 +569,7 @@
         slice.setAttribute("aria-hidden", "true");
         slice.style.setProperty("--slice-depth", `${(depth * ratio).toFixed(6)}em`);
         slice.style.setProperty("--slice-mix", `${(18 + (1 - ratio) * 64).toFixed(2)}%`);
-        word.insertBefore(slice, face);
+        shape.insertBefore(slice, face);
       }
     });
     let frame = 0;
@@ -528,7 +581,7 @@
       frame = 0;
     }
     page.addEventListener("pointermove", (event) => {
-      if (motionQuery.matches || !finePointer.matches) return;
+      if (motionQuery.matches || !finePointer.matches || event.pointerType === "touch") return;
       pointerX = event.clientX / innerWidth - .5;
       pointerY = event.clientY / innerHeight - .5;
       if (!frame) frame = requestAnimationFrame(paintPointer);
@@ -566,8 +619,11 @@
   <script type="module" src="/assets/stars.js"></script>
   <script type="module" src="/assets/liquid.js"></script>
   <script type="module" src="/assets/info.js"></script>
+  <script type="module" src="/assets/interaction.js"></script>
   <script type="module" src="/assets/typography.js"></script>
+  <script type="module" src="/assets/title-motion.js"></script>
   <script type="module" src="/assets/scene.js"></script>
+  <script type="module" src="/assets/intro.js"></script>
   <script data-goatcounter="https://kimweek.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>

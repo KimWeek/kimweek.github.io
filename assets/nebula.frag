@@ -64,35 +64,7 @@ float clouds(vec3 p, float t) {
   return value * 1.0357;
 }
 
-// A separate star population at every depth, composited between gas samples.
-// Coordinates stay fixed in space while the volume can flow in front of them.
-vec3 depthStars(vec2 screen, float distance, float layer) {
-  vec2 view = screen + (u_pointer * vec2(0.027, -0.027) + vec2(0.0, -u_camera)) / distance;
-  float scale = 115.0 + layer * 11.0;
-  vec2 grid = view * scale + vec2(layer * 37.13, layer * 19.71);
-  vec2 base = floor(grid - 0.5);
-  float cellSize = u_resolution.y / scale;
-  vec3 stars = vec3(0.0);
-  // Neighbouring cells keep bright cores and glow continuous across boundaries.
-  for (int y = 0; y < 2; y++) for (int x = 0; x < 2; x++) {
-    vec2 cell = base + vec2(float(x), float(y));
-    float seed = hash(cell + 91.7 + layer * 31.13);
-    if (seed > 0.9978) {
-      vec2 center = vec2(hash(cell), hash(cell + 23.8)) * 0.68 + 0.16;
-      vec2 offset = (grid - cell - center) * cellSize;
-      float magnitude = hash(cell + 53.19 + layer * 8.7);
-      float bright = pow(magnitude, 7.0);
-      float radius = min(0.40 + bright * 0.55, cellSize * 0.21);
-      float r2 = dot(offset, offset);
-      float core = exp(-r2 / (radius * radius));
-      float halo = exp(-r2 / (cellSize * cellSize * 0.0784)) * bright * 0.12;
-      float twinkle = 0.96 + sin(u_time * 0.30 + seed * 120.0) * 0.04;
-      vec3 tint = mix(vec3(1.0, 0.86, 0.70), vec3(0.72, 0.85, 1.0), smoothstep(0.12, 0.62, magnitude));
-      stars += tint * (core + halo) * (0.18 + bright * 1.3) * twinkle;
-    }
-  }
-  return stars;
-}
+// Stars render at display resolution on either side of this translucent gas pass.
 
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution;
@@ -141,24 +113,22 @@ void main() {
     float selfShadow = exp(-max(shadowDensity - billow, 0.0) * 7.0);
     illumination *= 0.32 + selfShadow * 0.68;
     float filaments = pow(smoothstep(0.40, 0.78, detail), 2.0) * smoothstep(0.43, 0.68, billow);
-    vec3 blue = mix(vec3(0.020, 0.065, 0.190), vec3(0.110, 0.335, 0.510), silver);
-    blue = mix(blue, vec3(0.030, 0.098, 0.255), far * 0.32);
-    vec3 gas = blue * (0.56 + silver * 1.8) * illumination;
-    gas += vec3(0.075, 0.220, 0.320) * filaments * illumination;
+    vec3 coolGas = mix(vec3(0.023, 0.037, 0.105), vec3(0.155, 0.205, 0.345), silver);
+    coolGas = mix(coolGas, vec3(0.028, 0.045, 0.150), far * 0.32);
+    float dusk = smoothstep(0.42, 0.69, noise3(p * 0.56 + vec3(3.7, 8.2, 1.3)));
+    vec3 duskGas = mix(vec3(0.075, 0.037, 0.078), vec3(0.265, 0.170, 0.265), silver);
+    vec3 gas = mix(coolGas, duskGas, dusk * 0.40) * (0.56 + silver * 1.8) * illumination;
+    gas += mix(vec3(0.135, 0.160, 0.280), vec3(0.220, 0.145, 0.235), dusk) * filaments * illumination;
     gas *= 1.0 - dust * 0.72;
     radiance += transmission * gas * opacity;
     opticalDepth += transmission * opacity;
     transmission *= 1.0 - opacity;
-    vec3 starTransmission = pow(vec3(transmission), vec3(0.86, 1.0, 1.18));
-    radiance += starTransmission * depthStars(screen, distance + 0.215, float(slice));
   }
 
-  vec3 deep = vec3(0.006, 0.013, 0.033);
-  vec3 color = radiance + transmission * (deep + depthStars(screen, 6.0, 9.0));
   float vignette = 1.0 - smoothstep(0.30, 1.04, length((uv - 0.5) * vec2(0.84, 1.0)));
-  color *= 0.68 + vignette * 0.32;
-  vec3 day = vec3(0.960, 0.956, 0.944) - opticalDepth * vec3(0.085, 0.080, 0.064) + radiance * 0.10;
-  color = mix(color, day, u_light);
-  color += (hash(gl_FragCoord.xy) - 0.5) / 255.0;
-  gl_FragColor = vec4(color, 1.0);
+  vec3 night = radiance * (0.68 + vignette * 0.32);
+  vec3 day = vec3(0.62, 0.68, 0.80) * opticalDepth * 0.60;
+  float alpha = opticalDepth * mix(1.0, 0.60, u_light);
+  vec3 color = mix(night, day, u_light) + (hash(gl_FragCoord.xy) - 0.5) * alpha / 255.0;
+  gl_FragColor = vec4(max(vec3(0.0),color),alpha);
 }

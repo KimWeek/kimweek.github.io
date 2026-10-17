@@ -1,4 +1,5 @@
 import { rollingText } from "./rolling.js";
+import { subscribePresence } from "./presence.js";
 
 export const PROFILE = Object.freeze({
   discordId: "704112831653609543",
@@ -7,6 +8,23 @@ export const PROFILE = Object.freeze({
   email: "week4452@gmail.com"
 });
 export const STATUS = Object.freeze({ online: "온라인", idle: "자리 비움", dnd: "방해 금지", offline: "오프라인" });
+const statusMotions = new WeakMap();
+
+export function renderPresence(label,orb,text,status) {
+  const previous=label.dataset.status;
+  if(previous===status&&label.textContent===text)return;
+  statusMotions.get(label)?.forEach(animation=>animation.cancel());
+  label.textContent=text;label.dataset.status=status;orb.dataset.status=status;
+  if(!previous||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const textMotion=label.animate?.([
+    {opacity:.15,transform:'translate3d(0,5px,0)',filter:'blur(2px)'},
+    {opacity:1,transform:'translate3d(0,0,0)',filter:'blur(0px)'}
+  ],{duration:300,easing:'cubic-bezier(.16,1,.3,1)'});
+  const orbMotion=orb.animate?.([
+    {transform:'scale(.8)'},{transform:'scale(1.16)',offset:.55},{transform:'scale(1)'}
+  ],{duration:360,easing:'cubic-bezier(.22,1,.36,1)'});
+  statusMotions.set(label,[textMotion,orbMotion].filter(Boolean));
+}
 
 export function seoulDate(date = new Date()) {
   const parts = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(date);
@@ -62,23 +80,11 @@ function startInfo() {
       return await response.json();
     } finally { clearTimeout(timer); }
   }
-  let presenceBusy = false;
-  let lastPresence = 0;
-  async function updatePresence() {
-    if (presenceBusy) return;
-    presenceBusy = true;
-    try {
-      const payload = await fetchJSON(`https://api.lanyard.rest/v1/users/${PROFILE.discordId}`);
-      const status = payload.success && payload.data?.discord_status;
-      if (!Object.hasOwn(STATUS, status)) throw new Error("Invalid presence");
-      $("discord-status").textContent = STATUS[status];
-      $("status-orb").dataset.status = status;
-      lastPresence = Date.now();
-    } catch {
-      $("discord-status").textContent = "확인 불가";
-      $("status-orb").dataset.status = "unknown";
-    } finally { presenceBusy = false; }
-  }
+  const presence = subscribePresence(PROFILE.discordId,status => {
+    renderPresence($("discord-status"),$("status-orb"),STATUS[status],status);
+  },() => {
+    renderPresence($("discord-status"),$("status-orb"),"확인 불가","unknown");
+  });
   let visitsBusy = false;
   let lastVisits = 0;
   async function updateVisits() {
@@ -99,14 +105,13 @@ function startInfo() {
   function refresh() {
     if (document.hidden) return;
     renderClock();
-    if (Date.now() - lastPresence >= 25000) updatePresence();
+    presence.refresh();
     if (Date.now() - lastVisits >= 55000) updateVisits();
   }
   addEventListener("portfolio-scenechange", event => { if (event.detail.info) refresh(); });
   document.addEventListener("visibilitychange", refresh);
   addEventListener("online", refresh);
   setInterval(() => { if (showingInfo) refresh(); }, 30000);
-  updatePresence();
   updateVisits();
 
   let noticeTimer = 0;

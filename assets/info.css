@@ -25,8 +25,6 @@
   min-height: 100svh;
   min-height: 100dvh;
   overflow: visible;
-  scrollbar-width: thin;
-  scrollbar-color: var(--glass-border) transparent;
   padding: max(108px, calc(env(safe-area-inset-top) + 88px)) var(--gutter) max(36px, env(safe-area-inset-bottom));
   color: var(--ink);
   font-family: Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
@@ -68,8 +66,10 @@
 .status-orb[data-status="online"] { --status-color: #53d595; }
 .status-orb[data-status="idle"] { --status-color: #e6b467; }
 .status-orb[data-status="dnd"] { --status-color: #ed737c; }
-.visits-panel { display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding: 25px 28px; gap: 20px; }
-.visit-item + .visit-item { border-left: 1px solid var(--glass-border); padding-left: 25px; }
+.visits-panel { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); align-items: center; padding: 25px 28px; gap: 0; }
+.visits-panel.glass-panel::before { content: ''; position: absolute; left: 50%; top: 27px; bottom: 27px; width: 1px; background: var(--glass-border); pointer-events: none; }
+.visit-item { min-width: 0; padding-inline: 0 18px; }
+.visit-item + .visit-item { padding-inline: 27px 0; }
 .visit-value { display: block; margin-top: 12px; font-family: "Editorial Sans", Arial, sans-serif; font-size: clamp(28px, 3.2vw, 40px); font-weight: 400; font-variant-numeric: tabular-nums; letter-spacing: -.045em; }
 .info-links { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 10px; padding-top: 5px; }
 .info-link { display: flex; align-items: center; justify-content: space-between; gap: 26px; min-height: 53px; padding: 0 20px; color: var(--ink); text-decoration: none; font-size: 12px; flex: 1; }
